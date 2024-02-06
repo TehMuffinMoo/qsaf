@@ -1,0 +1,8 @@
+#!/bin/sh
+# Start syslog-ng and collector or replay
+
+		/usr/sbin/syslog-ng
+		/usr/sbin/crond
+		/home/qsaf/qsaf.py
+		/usr/bin/tail -f /dev/null
+exit 0
