@@ -27,6 +27,9 @@ config.read('/home/qsaf/config.ini')
 log_format = config['queryformat']['source']
 dns_server = config['dnsforwarder']['forwarder']
 role = config['role']['role']
+debug = config['debug']['state']
+
+print('Debug mode is: '+debug+'\r',end="")
 
 #logging.basicConfig(handlers = [logging.FileHandler('replay-query.log'), logging.StreamHandler()],level=logging.INFO,format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 #log_file = 'dns-query.log'
@@ -55,7 +58,9 @@ def send_dns_query(qip,qname,qtype,dns_server):
 
         message = dns.message.make_query(qname, qtype, use_edns=True, options = options)
         #message.payload = PAYLOAD
-        print(message)  
+        if debug=='True':
+            print(message+'\r',end="")
+
         dns.query.udp(message, dns_server, timeout=TIMEOUT)
     except:
         global errors
@@ -67,13 +72,15 @@ def send_dns_query(qip,qname,qtype,dns_server):
 #########################################################
 
 if role =='forwarder':
-    file=open(log_file, 'r')	
+    print('Forwarder Mode Enabled. Logs will be collected from /var/log/syslog-ng/logs\r')
+    file=open(log_file, 'r')
     content = file.readlines()
-elif (role =='both'): 
+elif (role =='both'):
+    print('Both Collector & Forwarder Mode enabled.\r')
     content = tailer.follow(open(log_file))
 elif (role =='collector'):
     content = 'None'
-    print('Collector Mode Enabled. Logs will not be forwarded during this session')
+    print('Collector Mode Enabled. Logs will not be forwarded during this session\r')
 
 line_number=0
 starttime = timeit.default_timer()
@@ -85,6 +92,8 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=100) as executor:
 			line_number +=1
 			line = line.strip()
 			qip = qname = qtype = None
+			if debug=='True':
+				print(line)
 			if log_format =='query':
 				regex = re.compile(r'.*client @0x[0-9a-fA-F]+ ([^#]+)#\d+ \([^)]+\): query: ([^ ]+) [A-Z]+ ([A-Z]+) [+-]+.*$')
 				z = re.match(regex, line)
@@ -131,8 +140,8 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=100) as executor:
 						qip = z.groups()[0]
 						qname = z.groups()[1]
 						qtype = z.groups()[2]
-   
 
+			print("")
 			if not (qip == None and qname == None and qtype == None):
 				executor.submit(send_dns_query(qip,qname,qtype,dns_server))
 				threads+=1
