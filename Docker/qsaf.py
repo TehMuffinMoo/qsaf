@@ -123,8 +123,7 @@ print('Debug mode is: ',debug)
 
 if role =='forwarder':
     print('Forwarder Mode Enabled. Logs will be collected from /var/log/syslog-ng/logs\r')
-    file=open(log_file, 'r')
-    content = file.readlines()
+    content=open(log_file, 'r')
 elif (role =='both'):
     print('Both Collector & Forwarder Mode enabled.\r')
     content = tailer.follow(open(log_file))
