@@ -18,25 +18,19 @@ import configparser
 
 #########################################################	
 
-with open('/var/run/replay-query-log.pid', 'w', encoding='utf-8') as f:
+with open('/var/run/qsaf.pid', 'w', encoding='utf-8') as f:
     f.write(str(os.getpid()))
 
 config = configparser.ConfigParser()
-#config.read('/docker/qsaf/config.ini')
 config.read('/home/qsaf/config.ini')
-log_format = config['queryformat']['source']
-dns_server = config['dnsforwarder']['forwarder']
-role = config['role']['role']
-debug = config['debug']['state']
+log_format = config['syslog']['type']
+dns_server = config['dns']['forwarder']
+view = config['dns']['view']
+role = config['server']['role']
+print_frequency = config['server']['print_frequency']
+debug = config['debug']['enabled']
 
-print('Debug mode is: '+debug+'\r',end="")
-
-#logging.basicConfig(handlers = [logging.FileHandler('replay-query.log'), logging.StreamHandler()],level=logging.INFO,format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-#log_file = 'dns-query.log'
 log_file = '/var/log/syslog-ng/logs'
-#log_format = 'query' #query, response, capture
-#dns_server = '52.119.40.100'
-#dns_server = '8.8.8.8'
 errors = 0
 threads = 0
 
@@ -44,7 +38,7 @@ threads = 0
 
 def send_dns_query(qip,qname,qtype,dns_server):
     try:
-        TIMEOUT = 0.05
+        TIMEOUT = 0.00000005
         PAYLOAD = 512
 
         if ':' in qip:
@@ -54,13 +48,12 @@ def send_dns_query(qip,qname,qtype,dns_server):
 
         options = [dns.edns.GenericOption(65523,qip),                        #qip
         #dns.edns.GenericOption(65524,binascii.unhexlify('000000000000')),   #source mac
-        dns.edns.GenericOption(65526,'POC'.encode())]            #dns_view
+        dns.edns.GenericOption(65526,view.encode())]            #dns_view
 
         message = dns.message.make_query(qname, qtype, use_edns=True, options = options)
-        #message.payload = PAYLOAD
         if debug=='True':
-            print(message+'\r',end="")
-
+            print('Payload: \n',message)
+            print('########################\n')
         dns.query.udp(message, dns_server, timeout=TIMEOUT)
     except:
         global errors
@@ -69,7 +62,64 @@ def send_dns_query(qip,qname,qtype,dns_server):
     global threads
     threads-=1
 
+def start_job(line):
+	qip = qname = qtype = None
+	if debug=='True':
+		print(line)
+	if log_format =='query':
+		regex = re.compile(r'.*client @0x[0-9a-fA-F]+ ([^#]+)#\d+ \([^)]+\): query: ([^ ]+) [A-Z]+ ([A-Z]+) [+-]+.*$')
+		z = re.match(regex, line)
+		if z:
+			if len(z.groups()) == 3:
+				qip = z.groups()[0]
+				qname = z.groups()[1]
+				qtype = z.groups()[2]
+		else:
+			regex2 = re.compile(r'.*client ([^#]+)#\d+ \([^)]+\): view [^:]+: query: ([^ ]+) [A-Z]+ ([^ ]+) ')
+			y = re.match(regex2, line)
+			if y:
+				if len(y.groups()) == 3:
+					qip = y.groups()[0]
+					qname = y.groups()[1]
+					qtype = y.groups()[2]
+
+	if log_format =='response':
+		regex = re.compile(r'.*client ([^#]+)#\d+: (UDP|TCP): query: ([^ ]+) [A-Z]+ ([A-Z]+).*$')
+		z = re.match(regex, line)
+		if z:
+			if len(z.groups()) == 4:
+				qip = z.groups()[0]
+				qname = z.groups()[2]
+				qtype = z.groups()[3]
+			else:
+				regex2 = re.compile(r'.*client ([^#]+)#\d+: query: ([^ ]+) [A-Z]+ ([A-Z]+) .*$')
+				y = re.match(regex2, line)
+				if y:
+					if len(y.groups()) == 3:
+						qip = y.groups()[0]
+						qname = y.groups()[1]
+						qtype = y.groups()[2]
+    
+	if log_format =='capture':
+		regex = re.compile(r'\d+,\d+,Query,,([^,]+),\d+,,I,([^,]+),[^,]+,([^,]+)')
+		z = re.match(regex, line)
+		if z:
+			if len(z.groups()) == 3:
+				qip = z.groups()[0]
+				qname = z.groups()[1]
+				qtype = z.groups()[2]
+			
+	if not (qip == None and qname == None and qtype == None):
+		send_dns_query(qip,qname,qtype,dns_server)
+		print("\r", end="")
+		print("Queries: ",line_number, "/"," QPS: ",int(line_number/(timeit.default_timer() - starttime)),"Active Threads: ",threads ,"Errors: ",errors, end="")
+		if print_frequency != 0:
+			if line_number % print_frequency == 0:
+				print("\n")
+
 #########################################################
+
+print('Debug mode is: ',debug)
 
 if role =='forwarder':
     print('Forwarder Mode Enabled. Logs will be collected from /var/log/syslog-ng/logs\r')
@@ -91,61 +141,7 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=100) as executor:
 		for line in content:
 			line_number +=1
 			line = line.strip()
-			qip = qname = qtype = None
-			if debug=='True':
-				print(line)
-			if log_format =='query':
-				regex = re.compile(r'.*client @0x[0-9a-fA-F]+ ([^#]+)#\d+ \([^)]+\): query: ([^ ]+) [A-Z]+ ([A-Z]+) [+-]+.*$')
-				z = re.match(regex, line)
-				if z:
-					#print (len(z.groups()))
-					if len(z.groups()) == 3:
-						qip = z.groups()[0]
-						qname = z.groups()[1]
-						qtype = z.groups()[2]
-				else:
-					regex2 = re.compile(r'.*client ([^#]+)#\d+ \([^)]+\): view [^:]+: query: ([^ ]+) [A-Z]+ ([^ ]+) ')
-					y = re.match(regex2, line)
-					if y:
-						if len(y.groups()) == 3:
-							qip = y.groups()[0]
-							qname = y.groups()[1]
-							qtype = y.groups()[2]
+			threads+=1
+			executor.submit(start_job(line))
 
-			if log_format =='response':
-				regex = re.compile(r'.*client ([^#]+)#\d+: (UDP|TCP): query: ([^ ]+) [A-Z]+ ([A-Z]+).*$')
-				z = re.match(regex, line)
-				#print (z)
-				if z:
-					if len(z.groups()) == 4:
-						#logging.debug((z.groups()))
-						qip = z.groups()[0]
-						qname = z.groups()[2]
-						qtype = z.groups()[3]
-					else:
-						regex2 = re.compile(r'.*client ([^#]+)#\d+: query: ([^ ]+) [A-Z]+ ([A-Z]+) .*$')
-						y = re.match(regex2, line)
-						if y:
-							if len(y.groups()) == 3:
-								qip = y.groups()[0]
-								qname = y.groups()[1]
-								qtype = y.groups()[2]
-    
-			if log_format =='capture':
-				regex = re.compile(r'\d+,\d+,Query,,([^,]+),\d+,,I,([^,]+),[^,]+,([^,]+)')
-				z = re.match(regex, line)
-				if z:
-					if len(z.groups()) == 3:
-						#logging.debug((z.groups()))
-						qip = z.groups()[0]
-						qname = z.groups()[1]
-						qtype = z.groups()[2]
-
-			print("")
-			if not (qip == None and qname == None and qtype == None):
-				executor.submit(send_dns_query(qip,qname,qtype,dns_server))
-				threads+=1
-				print("\r", end="")
-				print("Queries: ",line_number, "/"," QPS: ",int(line_number/(timeit.default_timer() - starttime)),"Active Threads: ",threads ,"Errors: ",errors, end="")
-   
 print("\n")
