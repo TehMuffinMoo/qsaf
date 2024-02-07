@@ -27,7 +27,7 @@ log_format = config['syslog']['type']
 dns_server = config['dns']['forwarder']
 view = config['dns']['view']
 role = config['server']['role']
-print_frequency = config['server']['print_frequency']
+print_frequency = int(config['server']['print_frequency'])
 debug = config['debug']['enabled']
 
 log_file = '/var/log/syslog-ng/logs'
