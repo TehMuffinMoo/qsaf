@@ -138,7 +138,7 @@ print('Debug mode is: ',debug)
 
 if role =='forwarder':
     print('Forwarder Mode Enabled. Logs will be collected from /var/log/syslog-ng/logs\r')
-    for filename in os.listdir('.'):
+    for filename in os.listdir('/var/log/syslog-ng/'):
         if filename.endswith('.gz'):
             content=gzip.open(filename)
             print('Processing:',filename)
