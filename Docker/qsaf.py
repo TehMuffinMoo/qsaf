@@ -15,6 +15,7 @@ import timeit
 import tailer
 import os
 import configparser
+import gzip
 
 #########################################################	
 
@@ -116,31 +117,38 @@ def start_job(line):
 		if print_frequency != 0:
 			if line_number % print_frequency == 0:
 				print("\n")
+    
+def start_threadpool(content):
+    with concurrent.futures.ThreadPoolExecutor(max_workers=100) as executor:
+        if content is not None:
+            for line in content:
+                line_number +=1
+                line = line.strip()
+                threads+=1
+                executor.submit(start_job(line))
 
 #########################################################
+
+line_number=0
+starttime = timeit.default_timer()
 
 print('Debug mode is: ',debug)
 
 if role =='forwarder':
     print('Forwarder Mode Enabled. Logs will be collected from /var/log/syslog-ng/logs\r')
-    content=open(log_file, 'r')
+    for filename in os.listdir('.'):
+        if filename.endswith('.gz'):
+            content=gzip.open(filename)
+            start_threadpool(content)
+        elif filename == 'collector.log':
+            content=open(log_file, 'r')
+            start_threadpool(content)
 elif (role =='both'):
     print('Both Collector & Forwarder Mode enabled.\r')
     content = tailer.follow(open(log_file))
+    start_threadpool(content)
 elif (role =='collector'):
     content = 'None'
     print('Collector Mode Enabled. Logs will not be forwarded during this session\r')
-
-line_number=0
-starttime = timeit.default_timer()
-
-with concurrent.futures.ThreadPoolExecutor(max_workers=100) as executor:
-
-	if content is not None:
-		for line in content:
-			line_number +=1
-			line = line.strip()
-			threads+=1
-			executor.submit(start_job(line))
 
 print("\n")
