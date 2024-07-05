@@ -140,7 +140,8 @@ if role =='forwarder':
     print('Forwarder Mode Enabled. Logs will be collected from /var/log/syslog-ng/logs\r')
     for filename in os.listdir('/var/log/syslog-ng/'):
         if filename.endswith('.gz'):
-            content=gzip.open(filename)
+            filepath = '/var/log/syslog-ng/'+filename
+            content=gzip.open(filepath)
             print('Processing:',filename)
             start_threadpool(content)
         elif filename == 'collector.log':
