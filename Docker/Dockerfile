@@ -27,5 +27,8 @@ RUN crontab /etc/qsaf/syslog-ng.cron
 RUN chmod +x /home/qsaf/startup
 RUN chmod +x /home/qsaf/qsaf.py
 
+## Set Python Output
+ENV PYTHONUNBUFFERED=1
+
 ## Add entrypoint
 ENTRYPOINT ["/bin/sh","/home/qsaf/startup"]
