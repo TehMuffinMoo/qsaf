@@ -12,6 +12,7 @@ ADD ./Docker/syslog-ng.conf /etc/syslog-ng/syslog-ng.conf
 
 ## Install Logrotate
 RUN apk add --update --no-cache logrotate
+ADD ./Docker/logrotate.conf /etc/logrotate.d/syslog-ng
 
 ## Make base directory
 RUN mkdir /home/qsaf
