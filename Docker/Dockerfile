@@ -10,12 +10,16 @@ RUN apk add --update --no-cache syslog-ng
 RUN mkdir /var/log/syslog-ng
 ADD ./Docker/syslog-ng.conf /etc/syslog-ng/syslog-ng.conf
 
+## Install Logrotate
+RUN apk add --update --no-cache logrotate
+
 ## Make base directory
 RUN mkdir /home/qsaf
 
 ## Add Scripts
 ADD ./Docker/startup /home/qsaf/startup
 ADD ./Docker/qsaf.py /home/qsaf/qsaf.py
+ADD ./Docker/logrotate.cron /etc/crontabs/syslog-ng
 
 ## Set permissions
 RUN chmod +x /home/qsaf/startup
