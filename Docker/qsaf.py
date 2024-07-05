@@ -30,7 +30,7 @@ role = config['server']['role']
 print_frequency = int(config['server']['print_frequency'])
 debug = config['debug']['enabled']
 
-log_file = '/var/log/syslog-ng/logs'
+log_file = '/var/log/syslog-ng/collector.log'
 errors = 0
 threads = 0
 
