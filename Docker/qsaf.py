@@ -123,6 +123,7 @@ def start_job(line):
     
 def start_threadpool(content):
     global line_number
+    global threads
     with concurrent.futures.ThreadPoolExecutor(max_workers=100) as executor:
         if content is not None:
             for line in content:
