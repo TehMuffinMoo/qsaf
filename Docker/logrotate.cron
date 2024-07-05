@@ -1,1 +1,1 @@
-*/5 * * * * logrotate /etc/logrotate.d/syslog-ng -d
+*/5 * * * * logrotate /etc/logrotate.d/syslog-ng --state /var/log/syslog-ng/logrotate.state
