@@ -141,8 +141,10 @@ if role =='forwarder':
     for filename in os.listdir('.'):
         if filename.endswith('.gz'):
             content=gzip.open(filename)
+            print('Processing:',filename)
             start_threadpool(content)
         elif filename == 'collector.log':
+            print('Processing:',log_file)
             content=open(log_file, 'r')
             start_threadpool(content)
 elif (role =='both'):
