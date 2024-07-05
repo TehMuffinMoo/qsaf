@@ -20,7 +20,8 @@ RUN mkdir /home/qsaf
 ## Add Scripts
 ADD ./Docker/startup /home/qsaf/startup
 ADD ./Docker/qsaf.py /home/qsaf/qsaf.py
-ADD ./Docker/logrotate.cron /etc/crontabs/syslog-ng
+ADD ./Docker/logrotate.cron /etc/qsaf/syslog-ng.cron
+RUN crontab /etc/qsaf/syslog-ng.cron
 
 ## Set permissions
 RUN chmod +x /home/qsaf/startup
