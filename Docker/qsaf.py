@@ -21,6 +21,9 @@ import gzip
 
 with open('/var/run/qsaf.pid', 'w', encoding='utf-8') as f:
     f.write(str(os.getpid()))
+    
+line_number=0
+starttime = timeit.default_timer()
 
 config = configparser.ConfigParser()
 config.read('/home/qsaf/config.ini')
@@ -128,9 +131,6 @@ def start_threadpool(content):
                 executor.submit(start_job(line))
 
 #########################################################
-
-line_number=0
-starttime = timeit.default_timer()
 
 print('Debug mode is: ',debug)
 
