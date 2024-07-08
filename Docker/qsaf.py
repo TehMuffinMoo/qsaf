@@ -61,13 +61,15 @@ def send_dns_query(qip,qname,qtype,dns_server,type):
             print('Payload: \n',message)
             print('########################\n')
             
-        match dns_server_type:
+        match type:
             case 'Plain':
                 dns.query.udp(message, dns_server, timeout=TIMEOUT)
             case 'DoH':
                 dns.query.https(message, dns_server, timeout=TIMEOUT)
             case 'DoT':
                 dns.query.tls(message, dns_server, timeout=TIMEOUT)
+            case _:
+                print('Invalid DNS Server Type')
     except:
         global errors
         errors=+1
@@ -123,7 +125,7 @@ def start_job(line):
 				qtype = z.groups()[2]
 			
 	if not (qip == None and qname == None and qtype == None):
-		send_dns_query(qip,qname,qtype,dns_server)
+		send_dns_query(qip,qname,qtype,dns_server,dns_server_type)
 		print("\r", end="")
 		print("Queries: ",line_number, "/"," QPS: ",int(line_number/(timeit.default_timer() - starttime)),"Active Threads: ",threads ,"Errors: ",errors, end="")
 		if print_frequency != 0:
