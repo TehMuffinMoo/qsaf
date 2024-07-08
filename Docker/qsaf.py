@@ -121,15 +121,18 @@ def start_job(line):
 			if line_number % print_frequency == 0:
 				print("\n")
     
-def start_threadpool(content):
-    global line_number
-    global threads
+def start_threadpool(content):                                              
+    global line_number                                                      
+    global threads                                                                      
     with concurrent.futures.ThreadPoolExecutor(max_workers=100) as executor:
-        if content is not None:
-            for line in content:
-                line_number +=1
-                line = line.strip()
-                threads+=1
+        if content is not None:                         
+            for line in content:                        
+                line_number +=1                            
+                if isinstance(line, (bytes, bytearray)):
+                    line = str(line, "utf-8").strip()
+                else:                           
+                    line = line.strip()                  
+                threads+=1                               
                 executor.submit(start_job(line))
 
 #########################################################
