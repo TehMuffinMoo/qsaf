@@ -3,7 +3,7 @@ FROM alpine:latest
 ## Install Python
 ENV PYTHONUNBUFFERED=1
 RUN apk add --update --no-cache python3 py3-pip && ln -sf python3 /usr/bin/python
-RUN pip install dnspython tailer --break-system-packages
+RUN pip install dnspython[doh] tailer --break-system-packages
 
 ## Install Syslog-NG
 RUN apk add --update --no-cache syslog-ng

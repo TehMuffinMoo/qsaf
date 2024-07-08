@@ -16,6 +16,7 @@ import tailer
 import os
 import configparser
 import gzip
+import httpx
 
 #########################################################	
 
@@ -29,6 +30,7 @@ config = configparser.ConfigParser()
 config.read('/home/qsaf/config.ini')
 log_format = config['syslog']['type']
 dns_server = config['dns']['forwarder']
+dns_server_type = config['dns']['type']
 view = config['dns']['view']
 role = config['server']['role']
 print_frequency = int(config['server']['print_frequency'])
@@ -40,7 +42,7 @@ threads = 0
 
 #########################################################
 
-def send_dns_query(qip,qname,qtype,dns_server):
+def send_dns_query(qip,qname,qtype,dns_server,type):
     try:
         TIMEOUT = 0.00000005
         PAYLOAD = 512
@@ -58,7 +60,14 @@ def send_dns_query(qip,qname,qtype,dns_server):
         if debug=='True':
             print('Payload: \n',message)
             print('########################\n')
-        dns.query.udp(message, dns_server, timeout=TIMEOUT)
+            
+        match dns_server_type:
+            case 'Plain':
+                dns.query.udp(message, dns_server, timeout=TIMEOUT)
+            case 'DoH':
+                dns.query.https(message, dns_server, timeout=TIMEOUT)
+            case 'DoT':
+                dns.query.tls(message, dns_server, timeout=TIMEOUT)
     except:
         global errors
         errors=+1
