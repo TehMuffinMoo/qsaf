@@ -1,4 +1,4 @@
-name: Build release-tags
+name: Build Latest Release
 
 on:
   workflow_dispatch:

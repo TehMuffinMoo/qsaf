@@ -1,4 +1,4 @@
-name: Build release-tags
+name: Build Dev Release
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ on:
       - dev
 
 jobs:
-  bake-latest:
+  bake-dev:
     runs-on: ubuntu-latest
     permissions:
       packages: write
