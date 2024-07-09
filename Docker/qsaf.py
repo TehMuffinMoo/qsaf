@@ -17,7 +17,6 @@ import os
 import configparser
 import gzip
 import httpx
-import asyncio
 
 #########################################################	
 
@@ -44,6 +43,7 @@ threads = 0
 #########################################################
 
 def send_dns_query(qip,qname,qtype,dns_server,type):
+    global errors
     try:
         TIMEOUT = 0.00000005
         PAYLOAD = 512
@@ -61,19 +61,22 @@ def send_dns_query(qip,qname,qtype,dns_server,type):
         if debug=='True':
             print('Payload: \n',message)
             print('########################\n')
-            
-        match type:
-            case 'Plain':
-                dns.query.udp(message, dns_server, timeout=0.00000005)
-            case 'DoH':
-                #dns.query.https(message, dns_server, timeout=0.05)
-                dns.asyncquery.https(message, dns_server, timeout=0.05)
-            case 'DoT':
-                dns.query.tls(message, dns_server, timeout=0.05)
-            case _:
-                print('Invalid DNS Server Type')
+        try:
+            match type:
+                case 'Plain':
+                    #dns.query.udp(message, dns_server, timeout=0.00000005)
+                    dns.query.udp(message, dns_server, timeout=TIMEOUT)
+                case 'DoH':
+                    #dns.query.https(message, dns_server, timeout=0.05)
+                    dns.query.https(message, 'https://'+dns_server+'/dns-query', timeout=1)
+                case 'DoT':
+                    #dns.query.tls(message, dns_server, timeout=0.05)
+                    dns.query.tls(message, dns_server, timeout=TIMEOUT)
+                case _:
+                    print('Invalid DNS Server Type')
+        except:
+            errors=+1
     except:
-        global errors
         errors=+1
 
     global threads
