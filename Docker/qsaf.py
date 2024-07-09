@@ -58,7 +58,7 @@ def send_dns_query(qip,qname,qtype,dns_server,type):
         if debug=='True':
             print('Payload: \n',message)
             print('########################\n')
-        #try:
+        try:
             match type:
                 case 'Plain':
                     #dns.query.udp(message, dns_server, timeout=0.00000005)
@@ -71,8 +71,9 @@ def send_dns_query(qip,qname,qtype,dns_server,type):
                     dns.query.tls(message, dns_server, timeout=1)
                 case _:
                     print('Invalid DNS Server Type')
-        #except:
-        #    errors+=1
+        except:
+            if type!='Plain':
+                errors+=1
     except:
         errors+=1
 
