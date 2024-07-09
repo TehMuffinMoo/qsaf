@@ -45,9 +45,6 @@ threads = 0
 def send_dns_query(qip,qname,qtype,dns_server,type):
     global errors
     try:
-        TIMEOUT = 0.00000005
-        PAYLOAD = 512
-
         if ':' in qip:
             qip = socket.inet_pton(socket.AF_INET6, qip)
         else:
@@ -65,19 +62,19 @@ def send_dns_query(qip,qname,qtype,dns_server,type):
             match type:
                 case 'Plain':
                     #dns.query.udp(message, dns_server, timeout=0.00000005)
-                    dns.query.udp(message, dns_server, timeout=TIMEOUT)
+                    dns.query.udp(message, dns_server, timeout=0.00000005)
                 case 'DoH':
-                    #dns.query.https(message, dns_server, timeout=0.05)
+                    #dns.query.https(message, dns_server, timeout=1)
                     dns.query.https(message, 'https://'+dns_server+'/dns-query', timeout=1)
                 case 'DoT':
-                    #dns.query.tls(message, dns_server, timeout=0.05)
-                    dns.query.tls(message, dns_server, timeout=TIMEOUT)
+                    #dns.query.tls(message, dns_server, timeout=1)
+                    dns.query.tls(message, dns_server, timeout=1)
                 case _:
                     print('Invalid DNS Server Type')
         except:
-            errors=+1
+            errors+=1
     except:
-        errors=+1
+        errors+=1
 
     global threads
     threads-=1
