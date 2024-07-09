@@ -43,6 +43,7 @@ threads = 0
 #########################################################
 
 def send_dns_query(qip,qname,qtype,dns_server,type):
+    global errors
     try:
         TIMEOUT = 0.00000005
         PAYLOAD = 512
@@ -74,10 +75,8 @@ def send_dns_query(qip,qname,qtype,dns_server,type):
                 case _:
                     print('Invalid DNS Server Type')
         except:
-            global errors
             errors=+1
     except:
-        global errors
         errors=+1
 
     global threads
