@@ -17,7 +17,6 @@ import os
 import configparser
 import gzip
 import httpx
-import asyncio
 
 #########################################################	
 
@@ -43,7 +42,7 @@ threads = 0
 
 #########################################################
 
-async def send_dns_query(qip,qname,qtype,dns_server,type):
+def send_dns_query(qip,qname,qtype,dns_server,type):
     try:
         TIMEOUT = 0.00000005
         PAYLOAD = 512
@@ -65,13 +64,13 @@ async def send_dns_query(qip,qname,qtype,dns_server,type):
         match type:
             case 'Plain':
                 #dns.query.udp(message, dns_server, timeout=0.00000005)
-                await dns.asyncquery.udp(message, dns_server, timeout=TIMEOUT)
+                dns.query.udp(message, dns_server, timeout=TIMEOUT)
             case 'DoH':
                 #dns.query.https(message, dns_server, timeout=0.05)
-                await dns.asyncquery.https(message, 'https://'+dns_server+'/dns-query', timeout=1)
+                dns.query.https(message, 'https://'+dns_server+'/dns-query', timeout=1)
             case 'DoT':
                 #dns.query.tls(message, dns_server, timeout=0.05)
-                await dns.asyncquery.tls(message, dns_server, timeout=TIMEOUT)
+                dns.query.tls(message, dns_server, timeout=TIMEOUT)
             case _:
                 print('Invalid DNS Server Type')
     except:
@@ -129,7 +128,7 @@ def start_job(line):
 				qtype = z.groups()[2]
 			
 	if not (qip == None and qname == None and qtype == None):
-		asyncio.run(send_dns_query(qip,qname,qtype,dns_server,dns_server_type))
+		send_dns_query(qip,qname,qtype,dns_server,dns_server_type)
 		print("\r", end="")
 		print("Queries: ",line_number, "/"," QPS: ",int(line_number/(timeit.default_timer() - starttime)),"Active Threads: ",threads ,"Errors: ",errors, end="")
 		if print_frequency != 0:
