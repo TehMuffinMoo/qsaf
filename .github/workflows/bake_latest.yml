@@ -34,7 +34,45 @@ jobs:
           file: ./Docker/Dockerfile
           push: true
           tags: ghcr.io/tehmuffinmoo/qsaf:latest
-          outputs: type=docker,dest=/tmp/myimage.tar
+          outputs: type=docker,dest=/tmp/qsaf.tar
           build-args: |
             BUILD_COMMIT=${{ github.sha }}
             BUILD_BRANCH=${{ github.ref_name }}
+            
+      - name: Update Build
+        shell: pwsh
+        run: |
+            $CurrentBuild = Get-Content -Path ./.github/build.json | ConvertFrom-Json
+            $CurrentVersion = [Version]$CurrentBuild.Version
+            $NewVersion = [Version]::new($CurrentVersion.Major,$CurrentVersion.Minor+1)
+            $Build = @{
+              'SHA'    = $ENV:GITHUB_SHA
+              'Branch' = $Branch
+              'Version' = $($NewVersion.ToString())
+            }
+            Set-Content -Path .github/build.json -Value $($Build | ConvertTo-Json)
+            Write-Output "Version=$($NewVersion.ToString())" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIT_ACTIONS }}
+        with:
+          tag_name: ${{ env.Version }}
+          release_name: Release ${{ env.Version }}
+          body: ${{ env.ReleaseNotes }}
+          prerelease: false
+          draft: false
+          makeLatest: true
+
+      - name: Upload Tarball Asset
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: /tmp/qsaf.tar
+          asset_name: qsaf.tar
+          asset_content_type: application/tar

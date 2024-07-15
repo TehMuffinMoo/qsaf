@@ -34,7 +34,18 @@ jobs:
           file: ./Docker/Dockerfile
           push: true
           tags: ghcr.io/tehmuffinmoo/qsaf:dev
-          outputs: type=docker,dest=/tmp/myimage.tar
           build-args: |
             BUILD_COMMIT=${{ github.sha }}
             BUILD_BRANCH=${{ github.ref_name }}
+
+      - name: Update Build
+        shell: pwsh
+        run: |
+            $CurrentBuild = Get-Content -Path ./.github/build.json | ConvertFrom-Json
+            $CurrentVersion = [Version]$CurrentBuild.Version
+            $NewVersion = [Version]::new($CurrentVersion.Major,$CurrentVersion.Minor+1)
+            $Build = @{
+              'Branch' = $Branch
+              'Version' = $($NewVersion.ToString())
+            }
+            Set-Content -Path .github/build.json -Value $($Build | ConvertTo-Json)

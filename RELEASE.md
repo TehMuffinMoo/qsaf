@@ -1,0 +1,1 @@
+- Add release workflow to publish releases on push to main. This will include the Docker Tarball to support offline installation.
