@@ -85,6 +85,6 @@ jobs:
           git add .
           git status
           if ! git diff-index --quiet HEAD; then
-            git commit -m "Update Container to ${{ env.Version }}"
+            git commit -m "Update Container to v${{ env.Version }}"
             git push
           fi
