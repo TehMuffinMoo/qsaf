@@ -35,7 +35,6 @@ jobs:
           build-args: |
             BUILD_COMMIT=${{ github.sha }}
             BUILD_BRANCH=${{ github.ref_name }}
-
       - name: Update Build
         shell: pwsh
         run: |
@@ -49,6 +48,10 @@ jobs:
             }
             Set-Content -Path .github/build.json -Value $($Build | ConvertTo-Json)
             Write-Output "Version=$($NewVersion.ToString())" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
+            $ReleaseNotes = Get-Content -Path './RELEASE.md' -Raw
+            Write-Output "ReleaseNotes<<EOF" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
+            Write-Output "$($ReleaseNotes)" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
+            Write-Output "EOF" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
 
       - name: Create Release
         id: create_release
@@ -56,8 +59,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_ACTIONS }}
         with:
-          tag_name: ${{ env.Version }}
-          release_name: Release ${{ env.Version }}
+          tag_name: v${{ env.Version }}
+          release_name: Release v${{ env.Version }}
           body: ${{ env.ReleaseNotes }}
           prerelease: false
           draft: false
