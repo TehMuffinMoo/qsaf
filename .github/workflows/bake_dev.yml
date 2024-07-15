@@ -40,7 +40,7 @@ jobs:
         run: |
             $CurrentBuild = Get-Content -Path ./.github/build.json | ConvertFrom-Json
             $Build = @{
-              'Branch' = $Branch
+              'Branch' = $(git rev-parse --abbrev-ref HEAD)
               'Version' = $($CurrentBuild.Version)
             }
             Set-Content -Path .github/build.json -Value $($Build | ConvertTo-Json)

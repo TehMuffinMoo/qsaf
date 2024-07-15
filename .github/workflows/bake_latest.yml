@@ -44,7 +44,7 @@ jobs:
             $NewVersion = [Version]::new($CurrentVersion.Major,$CurrentVersion.Minor+1)
             $Build = @{
               'SHA'    = $ENV:GITHUB_SHA
-              'Branch' = $Branch
+              'Branch' = $(git rev-parse --abbrev-ref HEAD)
               'Version' = $($NewVersion.ToString())
             }
             Set-Content -Path .github/build.json -Value $($Build | ConvertTo-Json)
