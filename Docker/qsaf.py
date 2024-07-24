@@ -165,7 +165,7 @@ if role =='forwarder':
             print('Processing:',log_file)
             content=open(log_file, 'r')
             start_threadpool(content)
-    print('Log forwarding complete.')
+    print('\nLog forwarding complete.')
 elif (role =='both'):
     print('Both Collector & Forwarder Mode enabled.\r')
     content = tailer.follow(open(log_file))
