@@ -1,1 +1,1 @@
-- Add message when log forwarding is finished in forwarding mode.
+- Minor improvements
