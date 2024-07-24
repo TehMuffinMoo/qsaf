@@ -42,6 +42,7 @@ jobs:
         run: |
             if ($ENV:commitmessage -like "*docs*") {
               Write-Host "Documentation only update. Skipping build version change."
+              Write-Output "ReleaseUpdated=false" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
             } else {
               $CurrentBuild = Get-Content -Path ./.github/build.json | ConvertFrom-Json
               $CurrentVersion = [Version]$CurrentBuild.Version
@@ -63,9 +64,11 @@ jobs:
               Write-Output "ReleaseNotes<<EOF" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
               Write-Output "$($ReleaseNotes)" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
               Write-Output "EOF" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
+              Write-Output "ReleaseUpdated=true" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
             }
 
       - name: Create Release
+        if: ${{ env.ReleaseUpdated == 'true' }}
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -79,6 +82,7 @@ jobs:
           makeLatest: true
 
       - name: Upload Tarball Asset
+        if: ${{ env.ReleaseUpdated == 'true' }}
         id: upload-release-asset 
         uses: actions/upload-release-asset@v1
         env:
@@ -90,6 +94,7 @@ jobs:
           asset_content_type: application/tar
 
       - name: Update Repository
+        if: ${{ env.ReleaseUpdated == 'true' }}
         run: |
           git config --global user.name ${{ github.actor }}
           git config --global user.password ${{ secrets.GIT_ACTIONS }}
