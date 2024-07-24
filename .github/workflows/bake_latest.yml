@@ -37,21 +37,33 @@ jobs:
             BUILD_BRANCH=${{ github.ref_name }}
       - name: Update Build
         shell: pwsh
+        env:
+          commitmessage: ${{ github.event.head_commit.message }}
         run: |
-            $CurrentBuild = Get-Content -Path ./.github/build.json | ConvertFrom-Json
-            $CurrentVersion = [Version]$CurrentBuild.Version
-            $NewVersion = [Version]::new($CurrentVersion.Major,$CurrentVersion.Minor+1)
-            $Build = @{
-              'SHA'    = $ENV:GITHUB_SHA
-              'Branch' = $(git rev-parse --abbrev-ref HEAD)
-              'Version' = $($NewVersion.ToString())
+            if ($ENV:commitmessage -like "*docs*") {
+              Write-Host "Documentation only update. Skipping build version change."
+            } else {
+              $CurrentBuild = Get-Content -Path ./.github/build.json | ConvertFrom-Json
+              $CurrentVersion = [Version]$CurrentBuild.Version
+              $NewVersion = [Version]::new($CurrentVersion.Major,$CurrentVersion.Minor+1)
+              $Build = @{
+                'SHA'    = $ENV:GITHUB_SHA
+                'Branch' = $(git rev-parse --abbrev-ref HEAD)
+                'Version' = $($NewVersion.ToString())
+              }
+              Set-Content -Path .github/build.json -Value $($Build | ConvertTo-Json)
+
+              Write-Host "Updating CHANGELOG.."
+              $ChangeHistory = Get-Content -Path './CHANGELOG.md' -Raw
+              $ReleaseNotes = Get-Content -Path './RELEASE.md' -Raw
+              $ModuleVersionString = "## $($CurrentBuild.Version)"
+              Set-Content -Path './CHANGELOG.md' -Value ($ModuleVersionString + "`r`n" + $ReleaseNotes + "`r`n`r`n" + $ChangeHistory)
+
+              Write-Output "Version=$($NewVersion.ToString())" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
+              Write-Output "ReleaseNotes<<EOF" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
+              Write-Output "$($ReleaseNotes)" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
+              Write-Output "EOF" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
             }
-            Set-Content -Path .github/build.json -Value $($Build | ConvertTo-Json)
-            Write-Output "Version=$($NewVersion.ToString())" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
-            $ReleaseNotes = Get-Content -Path './RELEASE.md' -Raw
-            Write-Output "ReleaseNotes<<EOF" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
-            Write-Output "$($ReleaseNotes)" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
-            Write-Output "EOF" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
 
       - name: Create Release
         id: create_release
