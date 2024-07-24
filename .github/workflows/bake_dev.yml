@@ -12,19 +12,46 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2.3.4
+
+      - name: Update Build
+        shell: pwsh
+        env:
+          commitmessage: ${{ github.event.head_commit.message }}
+        run: |
+            if ($ENV:commitmessage -like "*docs*") {
+              Write-Host "Documentation only update. Skipping build version change."
+              Write-Output "BuildUpdated=false" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
+            } else {
+              $CurrentBuild = Get-Content -Path ./.github/build.json | ConvertFrom-Json
+              $Build = @{
+                'Branch' = $(git rev-parse --abbrev-ref HEAD)
+                'Version' = $($CurrentBuild.Version)
+              }
+              Set-Content -Path .github/build.json -Value $($Build | ConvertTo-Json)
+              Write-Output "Version=$($CurrentBuild.Version)" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
+              Write-Output "BuildUpdated=true" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
+            }
+
       - name: Set up QEMU
+        if: ${{ env.BuildUpdated == 'true' }}
         uses: docker/setup-qemu-action@v1
         with:
           platforms: all
+
       - name: Set up Docker Buildx
+        if: ${{ env.BuildUpdated == 'true' }}
         uses: docker/setup-buildx-action@v1.6.0
+
       - name: Login to GitHub Container Registry
+        if: ${{ env.BuildUpdated == 'true' }}
         uses: docker/login-action@v1.10.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build
+        if: ${{ env.BuildUpdated == 'true' }}
         uses: docker/build-push-action@v2
         with:
           context: .
@@ -34,17 +61,9 @@ jobs:
           build-args: |
             BUILD_COMMIT=${{ github.sha }}
             BUILD_BRANCH=${{ github.ref_name }}
-      - name: Update Build
-        shell: pwsh
-        run: |
-            $CurrentBuild = Get-Content -Path ./.github/build.json | ConvertFrom-Json
-            $Build = @{
-              'Branch' = $(git rev-parse --abbrev-ref HEAD)
-              'Version' = $($CurrentBuild.Version)
-            }
-            Set-Content -Path .github/build.json -Value $($Build | ConvertTo-Json)
-            Write-Output "Version=$($CurrentBuild.Version)" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
+
       - name: Update Repository
+        if: ${{ env.BuildUpdated == 'true' }}
         run: |
           git config --global user.name ${{ github.actor }}
           git config --global user.password ${{ secrets.GIT_ACTIONS }}
