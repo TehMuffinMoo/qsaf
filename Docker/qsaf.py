@@ -134,6 +134,9 @@ def start_job(line):
 		if print_frequency != 0:
 			if line_number % print_frequency == 0:
 				print("\n")
+	else:
+		global threads
+		threads-=1
     
 def start_threadpool(content):                                              
     global line_number                                                      
@@ -146,7 +149,7 @@ def start_threadpool(content):
                     line = str(line, "utf-8").strip()
                 else:                           
                     line = line.strip()                  
-                threads+=1                               
+                threads+=1
                 executor.submit(start_job(line))
 
 #########################################################
