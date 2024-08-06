@@ -62,7 +62,7 @@ def send_dns_query(qip,qname,qtype,dns_server,type):
             match type:
                 case 'Plain':
                     #dns.query.udp(message, dns_server, timeout=0.00000005)
-                    dns.query.udp(message, dns_server, timeout=0.005)
+                    dns.query.udp(message, dns_server, timeout=0.00000005)
                 case 'DoH':
                     #dns.query.https(message, dns_server, timeout=1)
                     dns.query.https(message, 'https://'+dns_server+'/dns-query', timeout=1)
@@ -72,7 +72,7 @@ def send_dns_query(qip,qname,qtype,dns_server,type):
                 case _:
                     print('Invalid DNS Server Type')
         except:
-            #if type!='Plain':
+            if type!='Plain':
                 errors+=1
     except:
         errors+=1
@@ -138,7 +138,7 @@ def start_job(line):
 def start_threadpool(content):                                              
     global line_number                                                      
     global threads                                                                      
-    with concurrent.futures.ThreadPoolExecutor(max_workers=100) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
         if content is not None:                         
             for line in content:                        
                 line_number +=1                            
