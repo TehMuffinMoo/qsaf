@@ -81,6 +81,7 @@ def send_dns_query(qip,qname,qtype,dns_server,type):
     threads-=1
 
 def start_job(line):
+	global threads
 	qip = qname = qtype = None
 	if debug=='True':
 		print(line)
@@ -135,7 +136,6 @@ def start_job(line):
 			if line_number % print_frequency == 0:
 				print("\n")
 	else:
-		global threads
 		threads-=1
     
 def start_threadpool(content):                                              
