@@ -85,7 +85,7 @@ def start_job(line):
 	if debug=='True':
 		print(line)
 	if log_format =='query':
-		regex = re.compile(r'.*client @0x[0-9a-fA-F]+ ([^#]+)#\d+ \([^)]+\): query: ([^ ]+) [aA-zZ]+ ([aA-zZ]+) [+-]+.*$')
+		regex = re.compile(r'.*client @0x[0-9a-fA-F]+ ([^#]+)#\d+ \([^)]+\): query: ([^ ]+) [A-Za-z]+ ([A-Za-z]+) [+-]+.*$')
 		z = re.match(regex, line)
 		if z:
 			if len(z.groups()) == 3:
@@ -93,7 +93,7 @@ def start_job(line):
 				qname = z.groups()[1]
 				qtype = z.groups()[2]
 		else:
-			regex2 = re.compile(r'.*client ([^#]+)#\d+ \([^)]+\): view [^:]+: query: ([^ ]+) [A-Z]+ ([^ ]+) ')
+			regex2 = re.compile(r'.*client ([^#]+)#\d+ \([^)]+\): view [^:]+: query: ([^ ]+) [A-Za-z]+ ([^ ]+) ')
 			y = re.match(regex2, line)
 			if y:
 				if len(y.groups()) == 3:
@@ -102,7 +102,7 @@ def start_job(line):
 					qtype = y.groups()[2]
 
 	if log_format =='response':
-		regex = re.compile(r'.*client ([^#]+)#\d+: (UDP|TCP): query: ([^ ]+) [A-Z]+ ([A-Z]+).*$')
+		regex = re.compile(r'.*client ([^#]+)#\d+: (UDP|TCP): query: ([^ ]+) [A-Za-z]+ ([A-Za-z]+).*$')
 		z = re.match(regex, line)
 		if z:
 			if len(z.groups()) == 4:
@@ -110,7 +110,7 @@ def start_job(line):
 				qname = z.groups()[2]
 				qtype = z.groups()[3]
 			else:
-				regex2 = re.compile(r'.*client ([^#]+)#\d+: query: ([^ ]+) [A-Z]+ ([A-Z]+) .*$')
+				regex2 = re.compile(r'.*client ([^#]+)#\d+: query: ([^ ]+) [A-Za-z]+ ([A-Za-z]+) .*$')
 				y = re.match(regex2, line)
 				if y:
 					if len(y.groups()) == 3:
