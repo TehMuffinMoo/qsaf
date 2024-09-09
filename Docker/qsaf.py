@@ -164,7 +164,7 @@ if role =='forwarder':
             content=gzip.open(filepath)
             print('Processing:',filename)
             start_threadpool(content)
-        elif filename == 'collector.log':
+        elif filename == 'collector.log' or filename.endswith('.txt'):
             print('Processing:',log_file)
             content=open(log_file, 'r')
             start_threadpool(content)
