@@ -1,6 +1,9 @@
 ## 0.6
 - Minor improvements
 
+## 0.6
+- Minor improvements
+
 ## 0.5
 - Add message when log forwarding is finished in forwarding mode.
 
