@@ -81,11 +81,12 @@ def send_dns_query(qip,qname,qtype,dns_server,type):
     threads-=1
 
 def start_job(line):
+	global threads
 	qip = qname = qtype = None
 	if debug=='True':
 		print(line)
 	if log_format =='query':
-		regex = re.compile(r'.*client @0x[0-9a-fA-F]+ ([^#]+)#\d+ \([^)]+\): query: ([^ ]+) [A-Z]+ ([A-Z]+) [+-]+.*$')
+		regex = re.compile(r'.*client @0x[0-9a-fA-F]+ ([^#]+)#\d+ \([^)]+\): query: ([^ ]+) [A-Za-z]+ ([A-Za-z]+) [+-]+.*$')
 		z = re.match(regex, line)
 		if z:
 			if len(z.groups()) == 3:
@@ -93,7 +94,7 @@ def start_job(line):
 				qname = z.groups()[1]
 				qtype = z.groups()[2]
 		else:
-			regex2 = re.compile(r'.*client ([^#]+)#\d+ \([^)]+\): view [^:]+: query: ([^ ]+) [A-Z]+ ([^ ]+) ')
+			regex2 = re.compile(r'.*client ([^#]+)#\d+ \([^)]+\): view [^:]+: query: ([^ ]+) [A-Za-z]+ ([^ ]+) ')
 			y = re.match(regex2, line)
 			if y:
 				if len(y.groups()) == 3:
@@ -102,7 +103,7 @@ def start_job(line):
 					qtype = y.groups()[2]
 
 	if log_format =='response':
-		regex = re.compile(r'.*client ([^#]+)#\d+: (UDP|TCP): query: ([^ ]+) [A-Z]+ ([A-Z]+).*$')
+		regex = re.compile(r'.*client ([^#]+)#\d+: (UDP|TCP): query: ([^ ]+) [A-Za-z]+ ([A-Za-z]+).*$')
 		z = re.match(regex, line)
 		if z:
 			if len(z.groups()) == 4:
@@ -110,7 +111,7 @@ def start_job(line):
 				qname = z.groups()[2]
 				qtype = z.groups()[3]
 			else:
-				regex2 = re.compile(r'.*client ([^#]+)#\d+: query: ([^ ]+) [A-Z]+ ([A-Z]+) .*$')
+				regex2 = re.compile(r'.*client ([^#]+)#\d+: query: ([^ ]+) [A-Za-z]+ ([A-Za-z]+) .*$')
 				y = re.match(regex2, line)
 				if y:
 					if len(y.groups()) == 3:
@@ -134,11 +135,13 @@ def start_job(line):
 		if print_frequency != 0:
 			if line_number % print_frequency == 0:
 				print("\n")
+	else:
+		threads-=1
     
 def start_threadpool(content):                                              
     global line_number                                                      
     global threads                                                                      
-    with concurrent.futures.ThreadPoolExecutor(max_workers=100) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
         if content is not None:                         
             for line in content:                        
                 line_number +=1                            
@@ -146,7 +149,7 @@ def start_threadpool(content):
                     line = str(line, "utf-8").strip()
                 else:                           
                     line = line.strip()                  
-                threads+=1                               
+                threads+=1
                 executor.submit(start_job(line))
 
 #########################################################
@@ -161,7 +164,7 @@ if role =='forwarder':
             content=gzip.open(filepath)
             print('Processing:',filename)
             start_threadpool(content)
-        elif filename == 'collector.log':
+        elif filename == 'collector.log' or filename.endswith('.txt'):
             print('Processing:',log_file)
             content=open(log_file, 'r')
             start_threadpool(content)
