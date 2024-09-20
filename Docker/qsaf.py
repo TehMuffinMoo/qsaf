@@ -35,10 +35,12 @@ view = config['dns']['view']
 role = config['server']['role']
 print_frequency = int(config['server']['print_frequency'])
 debug = config['debug']['enabled']
+ignored_domains = config['dns']['ignored_domains'].split(',')
 
 log_file = '/var/log/syslog-ng/collector.log'
 errors = 0
 threads = 0
+ignored = 0
 
 #########################################################
 
@@ -129,9 +131,19 @@ def start_job(line):
 				qtype = z.groups()[2]
 			
 	if not (qip == None and qname == None and qtype == None):
-		send_dns_query(qip,qname,qtype,dns_server,dns_server_type)
+		ignore = False
+        ## Skip ignored domains
+		if not (ignored_domains == None):
+			for igdom in ignored_domains:
+				if ignore == False:
+					if igdom in qname:
+						ignore = True
+		if ignore == False:
+			send_dns_query(qip,qname,qtype,dns_server,dns_server_type)
+		else:
+			ignored+=1
 		print("\r", end="")
-		print("Queries: ",line_number, "/"," QPS: ",int(line_number/(timeit.default_timer() - starttime)),"Active Threads: ",threads ,"Errors: ",errors, end="")
+		print("Queries: ",line_number, "/"," QPS: ",int(line_number/(timeit.default_timer() - starttime)),"Active Threads: ",threads ,"Errors: ",errors,"Ignored: ",ignored, end="")
 		if print_frequency != 0:
 			if line_number % print_frequency == 0:
 				print("\n")
@@ -143,7 +155,7 @@ def start_threadpool(content):
     global threads                                                                      
     with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
         if content is not None:                         
-            for line in content:                        
+            for line in content:                    
                 line_number +=1                            
                 if isinstance(line, (bytes, bytearray)):
                     line = str(line, "utf-8").strip()
@@ -162,10 +174,14 @@ if role =='forwarder':
         if filename.endswith('.gz'):
             filepath = '/var/log/syslog-ng/'+filename
             content=gzip.open(filepath)
+            print("\n")
             print('Processing:',filename)
+            print("\n")
             start_threadpool(content)
         elif filename == 'collector.log' or filename.endswith('.txt'):
+            print("\n")
             print('Processing:',log_file)
+            print("\n")
             content=open(log_file, 'r')
             start_threadpool(content)
     print('\nLog forwarding complete.')

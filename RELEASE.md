@@ -1,1 +1,2 @@
-- Minor improvements
+- Update cron job timer to 30 mins for log rotation
+- Add additional config option for excluding domains when replaying queries
