@@ -1,2 +1,3 @@
-- Update cron job timer to 30 mins for log rotation
-- Add additional config option for excluding domains when replaying queries
+- Fix a filepath bug
+- Add the ability to exclude domains from being replayed using 'ignored_domains' config option
+- Update logging to include Skipped, Ignored & split out Lines Processed vs. Queries forwarded
