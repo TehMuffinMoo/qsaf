@@ -38,6 +38,7 @@ debug = config['debug']['enabled']
 ignored_domains = config['dns']['ignored_domains'].split(',')
 
 log_file = '/var/log/syslog-ng/collector.log'
+queries = 0
 errors = 0
 threads = 0
 ignored = 0
@@ -84,6 +85,8 @@ def send_dns_query(qip,qname,qtype,dns_server,type):
 
 def start_job(line):
 	global threads
+	global queries
+	global ignored
 	qip = qname = qtype = None
 	if debug=='True':
 		print(line)
@@ -104,7 +107,7 @@ def start_job(line):
 					qname = y.groups()[1]
 					qtype = y.groups()[2]
 
-	if log_format =='response':
+	elif log_format =='response':
 		regex = re.compile(r'.*client ([^#]+)#\d+: (UDP|TCP): query: ([^ ]+) [A-Za-z]+ ([A-Za-z]+).*$')
 		z = re.match(regex, line)
 		if z:
@@ -121,7 +124,7 @@ def start_job(line):
 						qname = y.groups()[1]
 						qtype = y.groups()[2]
     
-	if log_format =='capture':
+	elif log_format =='capture':
 		regex = re.compile(r'\d+,\d+,Query,,([^,]+),\d+,,I,([^,]+),[^,]+,([^,]+)')
 		z = re.match(regex, line)
 		if z:
@@ -139,29 +142,31 @@ def start_job(line):
 					if igdom in qname:
 						ignore = True
 		if ignore == False:
+			queries +=1
 			send_dns_query(qip,qname,qtype,dns_server,dns_server_type)
 		else:
 			ignored+=1
+			threads-=1
 		print("\r", end="")
-		print("Queries: ",line_number, "/"," QPS: ",int(line_number/(timeit.default_timer() - starttime)),"Active Threads: ",threads ,"Errors: ",errors,"Ignored: ",ignored, end="")
+		print("Queries:",queries, " / ","QPS: ",int(queries/(timeit.default_timer() - starttime))," (Processed:",line_number," Active Threads:",threads," Errors:",errors," Ignored:",ignored, end=")")
 		if print_frequency != 0:
-			if line_number % print_frequency == 0:
+			if queries % print_frequency == 0:
 				print("\n")
 	else:
 		threads-=1
     
 def start_threadpool(content):                                              
-    global line_number                                                      
-    global threads                                                                      
+    global threads
+    global line_number
     with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
         if content is not None:                         
             for line in content:                    
-                line_number +=1                            
                 if isinstance(line, (bytes, bytearray)):
                     line = str(line, "utf-8").strip()
                 else:                           
                     line = line.strip()                  
                 threads+=1
+                line_number+=1
                 executor.submit(start_job(line))
 
 #########################################################
