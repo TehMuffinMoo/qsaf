@@ -171,8 +171,8 @@ print('Debug mode is: ',debug)
 if role =='forwarder':
     print('Forwarder Mode Enabled. Logs will be collected from /var/log/syslog-ng/logs\r')
     for filename in os.listdir('/var/log/syslog-ng/'):
+        filepath = '/var/log/syslog-ng/'+filename
         if filename.endswith('.gz'):
-            filepath = '/var/log/syslog-ng/'+filename
             content=gzip.open(filepath)
             print("\n")
             print('Processing:',filename)
@@ -180,9 +180,9 @@ if role =='forwarder':
             start_threadpool(content)
         elif filename == 'collector.log' or filename.endswith('.txt'):
             print("\n")
-            print('Processing:',log_file)
+            print('Processing:',filepath)
             print("\n")
-            content=open(log_file, 'r')
+            content=open(filepath, 'r')
             start_threadpool(content)
     print('\nLog forwarding complete.')
 elif (role =='both'):
