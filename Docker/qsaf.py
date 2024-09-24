@@ -150,7 +150,7 @@ def start_job(line):
 			ignored+=1
 			threads-=1
 		print("\r", end="")
-		print("Queries:",queries, " / ","QPS: ",int(queries/(timeit.default_timer() - starttime))," (Processed:",line_number," Active Threads:",threads," Errors:",errors," Ignored:",ignored," Skipped:",skipped, end=")")
+		print("Queries:",queries, " / ","QPS:",int(queries/(timeit.default_timer() - starttime))," (Processed:",line_number," Active Threads:",threads," Errors:",errors," Ignored:",ignored," Skipped:",skipped, end=")")
 		if print_frequency != 0:
 			if queries % print_frequency == 0:
 				print("\n")

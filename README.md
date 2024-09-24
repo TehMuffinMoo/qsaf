@@ -19,7 +19,7 @@ services:
 ## Logging
 When replaying the logs in either 'both' or 'forwarder' mode, you will see log entries in the docker logs as follows;
 
-`Queries: 2207821  /  QPS:  2983  (Processed: 2321734  Active Threads: 0  Errors: 0  Ignored: 112554  Skipped: 1359)`
+`Queries: 2207821  /  QPS: 2983  (Processed: 2321734  Active Threads: 0  Errors: 0  Ignored: 112554  Skipped: 1359)`
 
 These metrics are descibed as follows;
 
