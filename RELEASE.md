@@ -1,3 +1,4 @@
 - Fix a filepath bug
 - Add the ability to exclude domains from being replayed using 'ignored_domains' config option
 - Update logging to include Skipped, Ignored & split out Lines Processed vs. Queries forwarded
+- Update to process files in correct order when in forwarding mode
