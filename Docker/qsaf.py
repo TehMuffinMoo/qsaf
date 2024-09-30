@@ -96,7 +96,7 @@ def start_job(line):
 	if debug=='True':
 		print(line)
 	if log_format =='query':
-		regex = re.compile(r'.*client @0x[0-9a-fA-F]+ ([^#]+)#\d+ \([^)]+\): query: ([^ ]+) [A-Za-z]+ ([A-Za-z]+) [+-]+.*$')
+		regex = re.compile(r'.*client @0x[0-9a-fA-F]+ ([^#]+)#\d+ \([^)]+\): ((view [^:]+): )?query: ([^ ]+) [A-Za-z]+ ([A-Za-z]+) [+-]+.*$')
 		z = re.match(regex, line)
 		if z:
 			if len(z.groups()) == 3:
