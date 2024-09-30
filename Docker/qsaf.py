@@ -35,7 +35,10 @@ view = config['dns']['view']
 role = config['server']['role']
 print_frequency = int(config['server']['print_frequency'])
 debug = config['debug']['enabled']
-ignored_domains = config['dns']['ignored_domains'].split(',')
+if config['dns']['ignored_domains'] == '':
+    ignored_domains = None
+else:
+    ignored_domains = config['dns']['ignored_domains'].split(',')
 
 log_file = '/var/log/syslog-ng/collector.log'
 queries = 0 # Number of queries processed
@@ -138,7 +141,7 @@ def start_job(line):
 	if not (qip == None and qname == None and qtype == None):
 		ignore = False
         ## Skip ignored domains
-		if not (ignored_domains == None):
+		if ignored_domains is not None:
 			for igdom in ignored_domains:
 				if ignore == False:
 					if igdom in qname:
