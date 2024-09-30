@@ -107,7 +107,7 @@ def start_job(line):
 			regex2 = re.compile(r'.*client (@0x[0-9a-fA-F]+ )?([^#]+)#\d+ \([^)]+\): view [^:]+: query: ([^ ]+) [A-Za-z]+ ([^ ]+) ')
 			y = re.match(regex2, line)
 			if y:
-				if len(y.groups()) == 3:
+				if len(y.groups()) >= 3:
 					qip = y.groups()[1]
 					qname = y.groups()[2]
 					qtype = y.groups()[3]
