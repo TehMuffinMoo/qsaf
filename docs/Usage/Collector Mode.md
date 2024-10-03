@@ -7,7 +7,7 @@
 </h1>
 
 ## Overview
-The purpose of Collector Mode is to provide a means to perform syslog data collection, for replaying at a later time.
+The purpose of 'Collector' Mode is to provide a means to perform syslog data collection, for replaying at a later time.
 
 This applies when `role = collector` is set in the `config.ini` file.
 

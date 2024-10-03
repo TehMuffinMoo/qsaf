@@ -83,7 +83,7 @@ Each of the options within the Config File are detailed below.
 
 | Section | Option | Value(s) | Description |
 |---------|--------|----------|-------------|
-| server  | role | `collector`, `forwarder`, `both` | Specify the mode to run QSAF in. The Modes are described in more detail [here](#Placeholder). |
+| server  | role | `collector`, `forwarder`, `both` | Specify the mode to run QSAF in. The Modes are described in more detail here: [Collector](../../Usage/Collector%Mode/)  [Forwarder](../../Usage/Forwarder%Mode/)  [Both](../../Usage/Collector%20%26%20Forwarding%20Mode/). |
 | server  | print_frequency | int | The frequency in which updates are printed to the docker log. Setting to 0 will turn off updates. |
 | dns     | type | `Plain`, `DoH`, `DoT` | The type of DNS Query to use when replaying data. Plain is via UDP. DNS over HTTPS & DNS over TLS will have considerable performance impact. |
 | dns     | forwarder | ip | The IP Address of the Recursive DNS Server to use when replaying data. |
