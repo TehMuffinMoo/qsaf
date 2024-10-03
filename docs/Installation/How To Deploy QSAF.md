@@ -10,7 +10,7 @@
 You can deploy QSAF in an Online (Internet Connected) Environment, or an Offline (No Internet Connectivity) Environment. The steps for both of these options is included in the sections below.
 
 ## Pre-Requisites
-Ensure you have checked the [list of pre-requisites](./Pre-Requisites).
+Ensure you have checked the [list of pre-requisites](../Pre-Requisites).
 
 ## Configuring Docker Compose
 
@@ -36,19 +36,19 @@ services:
 ```
 
 ## Online Environment
-There is no additional steps when using an internet connected environment as the docker container will be downloaded directly from Github Container Repository. You can proceed to creating the <a href="#Config-File">config file</a>.
+There is no additional steps when using an internet connected environment as the docker container will be downloaded directly from Github Container Repository. You can proceed to creating the <a href="#config-file">config file</a>.
 
 ## Deploy QSAF in Offline Environment
 When connecting to the Github Docker Repository is not possible from the Docker Server, you can still deploy QSAF with some extra steps included below.
 
 ### Import the Tarball
-* Download the latest `qsaf.tar` from the [Releases](https://github.com/TehMuffinMoo/qsaf/releases) page.
+* Download the latest `qsaf.tar` from the <a href="https://github.com/TehMuffinMoo/qsaf/releases" target="_blank">Releases</a> page.
 
 * Transfer the file to the Docker Server
 
 * Import the Docker Container by using `docker load < qsaf.tar`
-```
-docker load < qsaf.tar 
+```bash
+sh-3.2$ docker load < qsaf.tar 
 63ca1fbb43ae: Loading layer [==================================================>]  3.624MB/3.624MB
 f0d007d7e628: Loading layer [==================================================>]  22.14MB/22.14MB
 bfa943ef6db4: Loading layer [==================================================>]  6.301MB/6.301MB
@@ -68,13 +68,18 @@ Loaded image: ghcr.io/tehmuffinmoo/qsaf:latest
 ```
 
 * Verify the Docker Image has been loaded by using `docker image ls`
-```
-docker image ls
+```bash
+sh-3.2$ docker image ls
 REPOSITORY                           TAG       IMAGE ID       CREATED             SIZE
 ghcr.io/tehmuffinmoo/qsaf            latest    0de3acf76154   About an hour ago   99.4MB
 ```
 
 ### Config File
+Create the config file, ensuring it aligns with the one specified in [Configuring Docker Compose](#configuring-docker-compose).
+
+You can get the latest example config file from [Github](https://github.com/TehMuffinMoo/qsaf/blob/main/config.ini).
+
+Each of the options within the Config File are detailed below.
 
 ### Start Docker Compose
 Once everything is configured, you can proceed to start the
