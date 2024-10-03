@@ -22,13 +22,13 @@
   <a href="https://www.codefactor.io/repository/github/tehmuffinmoo/qsaf"><img src="https://www.codefactor.io/repository/github/tehmuffinmoo/qsaf/badge"></a>
 </p>
 
-<h4 align="center">A Docker Container used to Store & Forward DNS Logs.</h4>
+<h4 align="center">A Docker Container used to Store & Forward DNS Queries.</h4>
 
 <p align="center">
   <a href="#key-features">Key Features</a> •
   <a href="#how-to-use">How To Use</a> •
   <a href="#key-features">Feature Requests</a> •
-  <a href="https://github.com/TehMuffinMoo/ibPS" target="_blank">Github</a> •
+  <a href="https://github.com/TehMuffinMoo/qsaf" target="_blank">Github</a> •
   <a href="#license">License</a> •
 </p>
 
@@ -43,7 +43,7 @@
 
 ## Feature Requests
 
-* If the cmdlet you are looking for is not yet built into the Module, you can raise a feature request via [Github Issues](https://github.com/TehMuffinMoo/qsaf/issues).
+* If the feature you are looking for is not yet built into the QSAF Container, you can raise a feature request via [Github Issues](https://github.com/TehMuffinMoo/qsaf/issues).
 
 ## License
 
