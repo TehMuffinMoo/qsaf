@@ -43,7 +43,7 @@
 
 ## Feature Requests
 
-* If the cmdlet you are looking for is not yet built into the Module, you can raise a feature request via [Github Issues](https://github.com/TehMuffinMoo/qsaf/issues).
+* If the feature you are looking for is not yet built into the QSAF Container, you can raise a feature request via [Github Issues](https://github.com/TehMuffinMoo/qsaf/issues).
 
 ## License
 
