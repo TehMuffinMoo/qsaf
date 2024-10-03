@@ -22,3 +22,8 @@ These metrics are descibed as follows;
 | Errors         | The number of errors encountered when processing |
 | Ignored        | The number of queries ignored through the use of the 'ignored_domains' configuration option |
 | Skipped        | The number of log lines skipped due to non-conforming regex. (Usually just random syslog noise in the logs) |
+
+## Docker Logs Command
+To tail the docker logs when running in daemon mode, you can use
+
+```docker logs docker-qsaf-1 --follow --since 1m```
