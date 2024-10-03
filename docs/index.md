@@ -28,7 +28,7 @@
   <a href="#key-features">Key Features</a> •
   <a href="#how-to-use">How To Use</a> •
   <a href="#key-features">Feature Requests</a> •
-  <a href="https://github.com/TehMuffinMoo/ibPS" target="_blank">Github</a> •
+  <a href="https://github.com/TehMuffinMoo/qsaf" target="_blank">Github</a> •
   <a href="#license">License</a> •
 </p>
 
