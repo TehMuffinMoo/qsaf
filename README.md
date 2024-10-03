@@ -1,3 +1,42 @@
+
+<style>
+  .paramName {
+    white-space: nowrap;
+  }
+</style>
+
+<h1 align="center">
+  <br>
+  <!--<a href=""><img src="" alt="Markdownify" width="200"></a>-->
+  <br>
+  Query Store & Forward (QSAF)
+  <br>
+</h1>
+
+<p align="center">
+  <a href="https://github.com/TehMuffinMoo/qsaf"><img src="https://img.shields.io/github/v/release/TehMuffinMoo/qsaf.svg?label=Github Release"></a>
+  <a href="https://github.com/TehMuffinMoo/qsaf"><img src="https://img.shields.io/github/languages/code-size/TehMuffinMoo/qsaf.svg?label=Code%20Size"></a>
+  <a href="https://raw.githubusercontent.com/TehMuffinMoo/qsaf/main/LICENSE"><img src="https://img.shields.io/github/license/TehMuffinMoo/qsaf?label=License"></a>
+  <a href="https://github.com/TehMuffinMoo/qsaf/releases"><img src="https://img.shields.io/github/release-date/tehmuffinmoo/qsaf?label=Latest%20Release"></a>
+  <a href="https://qsaf.readthedocs.io"><img src="https://img.shields.io/readthedocs/qsaf?label=Docs"></a>
+  <a href="https://www.codefactor.io/repository/github/tehmuffinmoo/qsaf"><img src="https://www.codefactor.io/repository/github/tehmuffinmoo/qsaf/badge"></a>
+</p>
+
+<h4 align="center">A Docker Container used to Store & Forward DNS Logs.</h4>
+
+<p align="center">
+  <a href="#key-features">Key Features</a> •
+  <a href="https://qsaf.readthedocs.io" target="_blank">Documentation</a> •
+  <a href="#key-features">Feature Requests</a> •
+  <a href="#license">License</a> •
+</p>
+
+## Key Features
+
+* Collect DNS Syslog data in various formats
+* Replay the collected log data as DNS Queries either in real time or separately later on
+* Replayed data retains original source IP and that is subsequently injected into the EDNS Headers of the DNS Queries
+
 ## Docker Compose Example
 ```
 version: '3'
@@ -16,19 +55,14 @@ services:
       - ./logs:/var/log/syslog-ng
 ```
 
-## Logging
-When replaying the logs in either 'both' or 'forwarder' mode, you will see log entries in the docker logs as follows;
+## Feature Requests
 
-`Queries: 2207821  /  QPS: 2983  (Processed: 2321734  Active Threads: 0  Errors: 0  Ignored: 112554  Skipped: 1359)`
+* If the feature you are looking for is not yet built into the QSAF Container, you can raise a feature request via [Github Issues](https://github.com/TehMuffinMoo/qsaf/issues).
 
-These metrics are descibed as follows;
+## License
 
-| Metric         | Description |
------------------|--------------
-| Queries        | The number of processed / forwarded DNS Queries |
-| QPS            | The calculated queries per second when replaying logs |
-| Processed      | The total number of log lines processed (Should be equal to the sum of Queries, Ignored & Skipped) |
-| Active Threads | The number of active threads |
-| Errors         | The number of errors encountered when processing |
-| Ignored        | The number of queries ignored through the use of the 'ignored_domains' configuration option |
-| Skipped        | The number of log lines skipped due to non-conforming regex. (Usually just random syslog noise in the logs) |
+MIT
+
+---
+
+> [Mat Cox]()
