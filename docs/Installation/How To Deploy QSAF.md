@@ -83,7 +83,14 @@ Each of the options within the Config File are detailed below.
 
 | Section | Option | Value(s) | Description |
 |---------|--------|----------|-------------|
-| Server  | Role   | `collector`, `forwarder`, `both` | |
+| server  | role | `collector`, `forwarder`, `both` | Specify the mode to run QSAF in. The Modes are described in more detail [here](#Placeholder). |
+| server  | print_frequency | int | The frequency in which updates are printed to the docker log. Setting to 0 will turn off updates. |
+| dns     | type | `Plain`, `DoH`, `DoT` | The type of DNS Query to use when replaying data. Plain is via UDP. DNS over HTTPS & DNS over TLS will have considerable performance impact. |
+| dns     | forwarder | ip | The IP Address of the Recursive DNS Server to use when replaying data. |
+| dns     | view | string | The name of the DNS View to use when replaying data into Infoblox Portal. |
+| dns     | ignored_domains | csv | A comma separated string of domains to exclude when replaying log data. |
+| syslog  | type | `query`,`response`,`capture` | The Syslog Type indicates the source data type when regex matching in forwarding mode. |
+| debug   | enabled | `true`,`false` | Enabling Debug Mode will print every query to console. |
 
 ### Start Docker Compose
-Once everything is configured, you can proceed to start the
+Once everything is configured, you can proceed to start the container using `docker compose up`
