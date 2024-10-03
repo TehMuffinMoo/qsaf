@@ -22,7 +22,7 @@
   <a href="https://www.codefactor.io/repository/github/tehmuffinmoo/qsaf"><img src="https://www.codefactor.io/repository/github/tehmuffinmoo/qsaf/badge"></a>
 </p>
 
-<h4 align="center">A Docker Container used to Store & Forward DNS Logs.</h4>
+<h4 align="center">A Docker Container used to Store & Forward DNS Queries.</h4>
 
 <p align="center">
   <a href="#key-features">Key Features</a> •
