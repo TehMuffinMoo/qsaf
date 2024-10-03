@@ -81,5 +81,9 @@ You can get the latest example config file from [Github](https://github.com/TehM
 
 Each of the options within the Config File are detailed below.
 
+| Section | Option | Value(s) | Description |
+|---------|--------|----------|-------------|
+| Server  | Role   | `collector`, `forwarder`, `both` | |
+
 ### Start Docker Compose
 Once everything is configured, you can proceed to start the
