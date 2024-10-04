@@ -89,7 +89,7 @@ Each of the options within the Config File are detailed below.
 | dns     | forwarder | ip | The IP Address of the Recursive DNS Server to use when replaying data. |
 | dns     | view | string | The name of the DNS View to use when replaying data into Infoblox Portal. |
 | dns     | ignored_domains | csv | A comma separated string of domains to exclude when replaying log data. |
-| syslog  | type | `query`, `response`, `capture` | The Syslog Type indicates the source data type when regex matching in forwarding mode. |
+| syslog  | type | `NIOS-Query`, `NIOS-Response`, `NIOS-Capture` | The Syslog Type indicates the source data type when regex matching in forwarding mode. |
 | debug   | enabled | `true`, `false` | Enabling Debug Mode will print every query to console. |
 
 ### Start Docker Compose
