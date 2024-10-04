@@ -34,7 +34,7 @@ dns_server = config['dns']['forwarder']
 
 ## Check valid Syslog Type has been set
 dns_server_type = config['dns']['type']
-with open("regex.json", encoding="utf8") as regexfile:
+with open("/home/qsaf/regex.json", encoding="utf8") as regexfile:
     data = json.load(regexfile)
     regexconfig = [x for x in data['Formats'] if x['Name'] == dns_server_type]
     if len(regexconfig) < 1:
