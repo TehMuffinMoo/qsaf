@@ -29,19 +29,19 @@ starttime = timeit.default_timer()
 
 config = configparser.ConfigParser()
 config.read('/home/qsaf/config.ini')
-log_format = config['syslog']['type']
 dns_server = config['dns']['forwarder']
+dns_server_type = config['dns']['type']
 
 ## Check valid Syslog Type has been set
-dns_server_type = config['dns']['type']
+log_format = config['syslog']['type']
 with open("/home/qsaf/regex.json", encoding="utf8") as regexfile:
     data = json.load(regexfile)
-    regexconfig = [x for x in data['Formats'] if x['Name'] == dns_server_type]
+    regexconfig = [x for x in data['Formats'] if x['Name'] == log_format]
     if len(regexconfig) < 1:
-        print('Error! Unable to find any regex defined with name:',dns_server_type)
+        print('Error! Unable to find any regex defined with name:',log_format)
         raise SystemExit
     elif len(regexconfig) > 1:
-        print('Error! More than one regex configuration was returned with name:',dns_server_type)
+        print('Error! More than one regex configuration was returned with name:',log_format)
         raise SystemExit
         
 view = config['dns']['view']
