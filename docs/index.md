@@ -25,21 +25,19 @@
 <h4 align="center">A Docker Container used to Store & Forward DNS Queries.</h4>
 
 <p align="center">
-  <a href="#key-features">Key Features</a> •
+  <a href="#overview">Overview</a> •
   <a href="#how-to-use">How To Use</a> •
   <a href="#key-features">Feature Requests</a> •
   <a href="https://github.com/TehMuffinMoo/qsaf" target="_blank">Github</a> •
   <a href="#license">License</a> •
 </p>
 
-## Key Features
+## Overview
+QSAF was designed to provide a means of passive DNS log collection for the purpose of an Infoblox Security Assessment.
 
-* Collect DNS Syslog data in various formats
-* Replay the collected log data as DNS Queries either in real time or separately later on
-* Replayed data retains original source IP and that is subsequently injected into the EDNS Headers of the DNS Queries
+You can collect DNS Syslog data in various formats, which can then be replayed as DNS queries in real time or stored for replaying at a later time.
 
-## How To Use
-
+Collected data will retain the original Source IP during replayed queries when sending them to the Infoblox Threat Defense Cloud Resolvers.
 
 ## Feature Requests
 
