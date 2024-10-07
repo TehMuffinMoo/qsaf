@@ -60,9 +60,7 @@ Ensure you have checked the [list of pre-requisites](../Pre-Requisites).
 
     <b>Example QSAF Configuration File</b>
 
-    See the [Config File](#config-file) section for details on QSAF configuration.
-
-    ??? info
+    ??? info "config.ini"
 
         ```
         [server]
@@ -96,6 +94,8 @@ Ensure you have checked the [list of pre-requisites](../Pre-Requisites).
         ## Debug logging (True/False)
         enabled = False
         ```
+    
+    See the [Config File](#config-file) section for details on QSAF configuration.
 
 ### Config File
 When creating the config file, ensure it aligns with the one specified in [Configuring Docker Compose](#:~:text=-%20/Docker/config.ini%3A/home/qsaf/config.ini).
