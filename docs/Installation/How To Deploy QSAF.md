@@ -62,8 +62,43 @@ Ensure you have checked the [list of pre-requisites](../Pre-Requisites).
 
     See the [Config File](#config-file) section for details on QSAF configuration.
 
+    ??? info
+
+        ```
+        [server]
+        ## The role of the qsaf container.
+        #### collector will simply collect syslog data via syslog-ng and keep it for future use
+        #### forwarder will take existing syslog-ng data and generate queries to the DNS forwarder
+        #### both will collect syslog data and generate queries in real time
+        role = both
+        ## The frequency in which updates are printed to the docker log. Setting to 0 will turn off updates.
+        print_frequency = 100
+
+        [dns]
+        ## The DNS Server Type to use when forwarding requests. (Plain/DoH/DoT)
+        type = Plain
+        ## The DNS Server to forward requests to
+        forwarder = 52.119.40.100
+        ## The DNS View name to apply to forwarded requests
+        view = mcox-sa
+        ## A comma-separated list of domains to ignore when replaying queries. This is useful for excluding internal domains. Leave blank to send all queries.
+        ignored_domains = mydomain.corp,intranet.acme.lab
+
+        [syslog]
+        ## The type of syslog to use for regex matching.
+        ## BIND-Query    # The Query log format for BIND / Infoblox NIOS
+        ## BIND-Response # The Response log format for BIND / Infoblox NIOS
+        ## NIOS-Capture  # The Infoblox NIOS Capture log format
+        ## Unbound-Query # The Unbound DNS Query log format
+        type = BIND-Query
+
+        [debug]
+        ## Debug logging (True/False)
+        enabled = False
+        ```
+
 ### Config File
-When creating the config file, ensure it aligns with the one specified in [Configuring Docker Compose](#:~:text=%2D%20./config.ini%3A/home/qsaf/config.ini).
+When creating the config file, ensure it aligns with the one specified in [Configuring Docker Compose](/#:~:text=-%20/Docker/config.ini%3A/home/qsaf/config.ini).
 
 You can get the latest example config file from [Github](https://github.com/TehMuffinMoo/qsaf/blob/main/config.ini).
 
