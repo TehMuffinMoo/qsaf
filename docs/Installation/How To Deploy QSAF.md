@@ -9,6 +9,8 @@
 ## Overview
 You can deploy QSAF in an Online (Internet Connected) Environment, or an Offline (No Internet Connectivity) Environment. The steps for both of these options is included in the sections below.
 
+This guide assumes that you are already familiar with Docker/Docker Compose. For in-depth installation steps, see the [detailed installation guide](../Detailed%20Installation%20Guide).
+
 ## Pre-Requisites
 Ensure you have checked the [list of pre-requisites](../Pre-Requisites).
 
@@ -92,5 +94,9 @@ Each of the options within the Config File are detailed below.
 | syslog  | type | `BIND-Query`, `BIND-Response`, `NIOS-Capture`, `Unbound-Query` | The Syslog Type indicates the source data type when regex matching in forwarding mode. |
 | debug   | enabled | `true`, `false` | Enabling Debug Mode will print every query to console. |
 
-### Start Docker Compose
-Once everything is configured, you can proceed to start the container using `docker compose up`
+### Start/Stop Docker Compose
+Once everything is configured, you can proceed to start the container using `docker compose up` or `docker compose up -d` to start it in daemon mode (in the background).
+
+If using daemon mode, you can check the logs as described [here](../../Usage/Log%20Output/).
+
+Once you have finished collecting and/or forwarding DNS Queries, you can stop the QSAF container by running `docker compose down`.
