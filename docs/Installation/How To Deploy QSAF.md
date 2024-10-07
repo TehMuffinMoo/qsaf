@@ -98,7 +98,7 @@ Ensure you have checked the [list of pre-requisites](../Pre-Requisites).
         ```
 
 ### Config File
-When creating the config file, ensure it aligns with the one specified in [Configuring Docker Compose](/#:~:text=-%20/Docker/config.ini%3A/home/qsaf/config.ini).
+When creating the config file, ensure it aligns with the one specified in [Configuring Docker Compose](#:~:text=-%20/Docker/config.ini%3A/home/qsaf/config.ini).
 
 You can get the latest example config file from [Github](https://github.com/TehMuffinMoo/qsaf/blob/main/config.ini).
 
