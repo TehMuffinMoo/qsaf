@@ -62,7 +62,7 @@ Ensure you have checked the [list of pre-requisites](../Pre-Requisites).
 
     ??? info "config.ini"
 
-        ```
+        ```ini
         [server]
         ## The role of the qsaf container.
         #### collector will simply collect syslog data via syslog-ng and keep it for future use
