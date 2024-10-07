@@ -14,41 +14,81 @@ This guide assumes that you are already familiar with Docker/Docker Compose. For
 ## Pre-Requisites
 Ensure you have checked the [list of pre-requisites](../Pre-Requisites).
 
-## Configuring Docker Compose
+## Configuring Docker / Compose
 
-There is an example configuration included below, which configures the necessary image location, exposed ports, folders & configuration file.
+1. Create a new directory for the Docker files and change into that new directory.
+    ```sh
+    mkdir /Docker
+    cd /Docker
+    ```
+2. Create a new directory for the log files to be stored in
+    ```sh
+    mkdir logs
+    ```
+3. Create & edit the Docker Compose file
+    ```sh
+    nano compose.yaml
+    ```
 
-You can customise this example to your needs.
+    <b>Example Docker Compose File</b>
+    There is an example configuration included below, which configures the necessary image location, exposed ports, folders & configuration file.
 
-```
-version: '3'
+    You can customise this example to your needs.
 
-services:
-  qsaf:
-    image: ghcr.io/tehmuffinmoo/qsaf:latest
-    ports:
-      - 514:514/udp
-    environment:
-      HWID: RANDOM
-      LOGLEVEL: INFO
-    restart: always
-    volumes:
-      - ./config.ini:/home/qsaf/config.ini
-      - ./logs:/var/log/syslog-ng
-```
+    ```
+    version: '3'
+
+    services:
+      qsaf:
+        image: ghcr.io/tehmuffinmoo/qsaf:latest
+        ports:
+          - 514:514/udp
+        environment:
+          HWID: RANDOM
+          LOGLEVEL: INFO
+        restart: always
+        volumes:
+          - ./config.ini:/home/qsaf/config.ini
+          - ./logs:/var/log/syslog-ng
+    ```
+4. Create & edit the QSAF Config file
+    ```sh
+    nano config.ini
+    ```
+
+    <b>Example QSAF Configuration File</b>
+    See the [Config File](#config-file) section for details on QSAF configuration.
+
+### Config File
+Create the config file, ensuring it aligns with the one specified in [Configuring Docker Compose](#configuring-docker-compose).
+
+You can get the latest example config file from [Github](https://github.com/TehMuffinMoo/qsaf/blob/main/config.ini).
+
+Each of the options within the Config File are detailed below.
+
+| Section | Option | Value(s) | Description |
+|---------|--------|----------|-------------|
+| server  | role | `collector`, `forwarder`, `both` | Specify the mode to run QSAF in. The Modes are described in more detail here: [Collector](../../Usage/Collector%20Mode/)  [Forwarder](../../Usage/Forwarder%20Mode/)  [Both](../../Usage/Collector%20%26%20Forwarding%20Mode/). |
+| server  | print_frequency | int | The frequency in which updates are printed to the docker log. Setting to 0 will turn off updates. |
+| dns     | type | `Plain`, `DoH`, `DoT` | The type of DNS Query to use when replaying data. Plain is via UDP. DNS over HTTPS & DNS over TLS will have considerable performance impact. |
+| dns     | forwarder | ip | The IP Address of the Recursive DNS Server to use when replaying data. |
+| dns     | view | string | The name of the DNS View to use when replaying data into Infoblox Portal. |
+| dns     | ignored_domains | csv | A comma separated string of domains to exclude when replaying log data. |
+| syslog  | type | `BIND-Query`, `BIND-Response`, `NIOS-Capture`, `Unbound-Query` | The Syslog Type indicates the source data type when regex matching in forwarding mode. |
+| debug   | enabled | `true`, `false` | Enabling Debug Mode will print every query to console. |
 
 ## Online Environment
-There is no additional steps when using an internet connected environment as the docker container will be downloaded directly from Github Container Repository. You can proceed to creating the <a href="#config-file">config file</a>.
+There is no additional steps when using an internet connected environment as the docker container will be downloaded directly from Github Container Repository.
 
 ## Deploy QSAF in Offline Environment
 When connecting to the Github Docker Repository is not possible from the Docker Server, you can still deploy QSAF with some extra steps included below.
 
-### Import the Tarball
-* Download the latest `qsaf.tar` from the <a href="https://github.com/TehMuffinMoo/qsaf/releases" target="_blank">Releases</a> page.
+### Installing from Source
+1. Download the latest `qsaf.tar` from the <a href="https://github.com/TehMuffinMoo/qsaf/releases" target="_blank">Releases</a> page.
 
-* Transfer the file to the Docker Server
+2. Transfer the tar file to the Docker Server via SCP/FTP/etc.
 
-* Import the Docker Container by using `docker load < qsaf.tar`
+3. Import the Docker Container Image by using `docker load < qsaf.tar`
 ```bash
 sh-3.2$ docker load < qsaf.tar 
 63ca1fbb43ae: Loading layer [==================================================>]  3.624MB/3.624MB
@@ -75,24 +115,6 @@ sh-3.2$ docker image ls
 REPOSITORY                           TAG       IMAGE ID       CREATED             SIZE
 ghcr.io/tehmuffinmoo/qsaf            latest    0de3acf76154   About an hour ago   99.4MB
 ```
-
-### Config File
-Create the config file, ensuring it aligns with the one specified in [Configuring Docker Compose](#configuring-docker-compose).
-
-You can get the latest example config file from [Github](https://github.com/TehMuffinMoo/qsaf/blob/main/config.ini).
-
-Each of the options within the Config File are detailed below.
-
-| Section | Option | Value(s) | Description |
-|---------|--------|----------|-------------|
-| server  | role | `collector`, `forwarder`, `both` | Specify the mode to run QSAF in. The Modes are described in more detail here: [Collector](../../Usage/Collector%20Mode/)  [Forwarder](../../Usage/Forwarder%20Mode/)  [Both](../../Usage/Collector%20%26%20Forwarding%20Mode/). |
-| server  | print_frequency | int | The frequency in which updates are printed to the docker log. Setting to 0 will turn off updates. |
-| dns     | type | `Plain`, `DoH`, `DoT` | The type of DNS Query to use when replaying data. Plain is via UDP. DNS over HTTPS & DNS over TLS will have considerable performance impact. |
-| dns     | forwarder | ip | The IP Address of the Recursive DNS Server to use when replaying data. |
-| dns     | view | string | The name of the DNS View to use when replaying data into Infoblox Portal. |
-| dns     | ignored_domains | csv | A comma separated string of domains to exclude when replaying log data. |
-| syslog  | type | `BIND-Query`, `BIND-Response`, `NIOS-Capture`, `Unbound-Query` | The Syslog Type indicates the source data type when regex matching in forwarding mode. |
-| debug   | enabled | `true`, `false` | Enabling Debug Mode will print every query to console. |
 
 ### Start/Stop Docker Compose
 Once everything is configured, you can proceed to start the container using `docker compose up` or `docker compose up -d` to start it in daemon mode (in the background).
