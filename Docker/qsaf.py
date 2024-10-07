@@ -17,6 +17,7 @@ import os
 import configparser
 import gzip
 import httpx
+import json
 
 #########################################################	
 
@@ -28,9 +29,21 @@ starttime = timeit.default_timer()
 
 config = configparser.ConfigParser()
 config.read('/home/qsaf/config.ini')
-log_format = config['syslog']['type']
 dns_server = config['dns']['forwarder']
 dns_server_type = config['dns']['type']
+
+## Check valid Syslog Type has been set
+log_format = config['syslog']['type']
+with open("/home/qsaf/regex.json", encoding="utf8") as regexfile:
+    data = json.load(regexfile)
+    regexconfig = [x for x in data['Formats'] if x['Name'] == log_format]
+    if len(regexconfig) < 1:
+        print('Error! Unable to find any regex defined with name:',log_format)
+        raise SystemExit
+    elif len(regexconfig) > 1:
+        print('Error! More than one regex configuration was returned with name:',log_format)
+        raise SystemExit
+        
 view = config['dns']['view']
 role = config['server']['role']
 print_frequency = int(config['server']['print_frequency'])
@@ -95,48 +108,15 @@ def start_job(line):
 	qip = qname = qtype = None
 	if debug=='True':
 		print(line)
-	if log_format =='query':
-		regex = re.compile(r'.*client @0x[0-9a-fA-F]+ ([^#]+)#\d+ \([^)]+\): query: ([^ ]+) [A-Za-z]+ ([A-Za-z]+) [+-]+.*$')
-		z = re.match(regex, line)
-		if z:
-			if len(z.groups()) == 3:
-				qip = z.groups()[0]
-				qname = z.groups()[1]
-				qtype = z.groups()[2]
-		else:
-			regex2 = re.compile(r'.*client (@0x[0-9a-fA-F]+ )?([^#]+)#\d+ \([^)]+\): view [^:]+: query: ([^ ]+) [A-Za-z]+ ([^ ]+) ')
-			y = re.match(regex2, line)
-			if y:
-				if len(y.groups()) >= 3:
-					qip = y.groups()[1]
-					qname = y.groups()[2]
-					qtype = y.groups()[3]
-
-	elif log_format =='response':
-		regex = re.compile(r'.*client ([^#]+)#\d+: (UDP|TCP): query: ([^ ]+) [A-Za-z]+ ([A-Za-z]+).*$')
-		z = re.match(regex, line)
-		if z:
-			if len(z.groups()) == 4:
-				qip = z.groups()[0]
-				qname = z.groups()[2]
-				qtype = z.groups()[3]
-			else:
-				regex2 = re.compile(r'.*client ([^#]+)#\d+: query: ([^ ]+) [A-Za-z]+ ([A-Za-z]+) .*$')
-				y = re.match(regex2, line)
-				if y:
-					if len(y.groups()) == 3:
-						qip = y.groups()[0]
-						qname = y.groups()[1]
-						qtype = y.groups()[2]
-    
-	elif log_format =='capture':
-		regex = re.compile(r'\d+,\d+,Query,,([^,]+),\d+,,I,([^,]+),[^,]+,([^,]+)')
-		z = re.match(regex, line)
-		if z:
-			if len(z.groups()) == 3:
-				qip = z.groups()[0]
-				qname = z.groups()[1]
-				qtype = z.groups()[2]
+	if regexconfig:
+		for regex in regexconfig[0]['Regexes']:
+			z = re.match(regex['Regex'], line)
+			if z:
+				if len(z.groups()) == regex['Capture-Groups']:
+					qip = z.groups()[regex['IP-Group']]
+					qname = z.groups()[regex['Query-Group']]
+					qtype = z.groups()[regex['Type-Group']]
+					break
 			
 	if not (qip == None and qname == None and qtype == None):
 		ignore = False
@@ -152,10 +132,10 @@ def start_job(line):
 		else:
 			ignored+=1
 			threads-=1
-		print("\r", end="")
-		print("Queries:",queries, " / ","QPS:",int(queries/(timeit.default_timer() - starttime))," (Processed:",line_number," Active Threads:",threads," Errors:",errors," Ignored:",ignored," Skipped:",skipped, end=")")
 		if print_frequency != 0:
 			if queries % print_frequency == 0:
+				print("\r", end="")
+				print("Queries:",queries, " / ","QPS:",int(queries/(timeit.default_timer() - starttime))," (Processed:",line_number," Active Threads:",threads," Errors:",errors," Ignored:",ignored," Skipped:",skipped, end=")")
 				print("\n")
 	else:
 		threads-=1
