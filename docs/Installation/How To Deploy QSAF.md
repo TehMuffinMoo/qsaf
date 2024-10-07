@@ -34,7 +34,7 @@ Ensure you have checked the [list of pre-requisites](../Pre-Requisites).
 
     You can customise this example to your needs.
 
-    ```
+    ```yaml
     version: '3'
 
     services:
@@ -56,7 +56,7 @@ Ensure you have checked the [list of pre-requisites](../Pre-Requisites).
     ```
 
     <b>Example QSAF Configuration File</b>
-    
+
     See the [Config File](#config-file) section for details on QSAF configuration.
 
 ### Config File
