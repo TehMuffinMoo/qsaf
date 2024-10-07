@@ -9,8 +9,6 @@
 ## Overview
 You can deploy QSAF in an Online (Internet Connected) Environment, or an Offline (No Internet Connectivity) Environment. The steps for both of these options is included in the sections below.
 
-This guide assumes that you are already familiar with Docker/Docker Compose. For in-depth installation steps, see the [detailed installation guide](../Detailed%20Installation%20Guide).
-
 ## Pre-Requisites
 Ensure you have checked the [list of pre-requisites](../Pre-Requisites).
 
