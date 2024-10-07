@@ -1,4 +1,4 @@
-## 0.8
+## 0.9
 - Move regex configuration to external file, which can be updated independent of the code
 - Improve logging to avoid unneccessarily large log files being generated within docker during replay
 
