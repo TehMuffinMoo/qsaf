@@ -35,8 +35,9 @@ jobs:
               Write-Host "Updating CHANGELOG.."
               $ChangeHistory = Get-Content -Path './CHANGELOG.md' -Raw
               $ReleaseNotes = Get-Content -Path './RELEASE.md' -Raw
-              $ModuleVersionString = "## $($CurrentBuild.Version)"
+              $ModuleVersionString = "## $($NewVersion.ToString())"
               Set-Content -Path './CHANGELOG.md' -Value ($ModuleVersionString + "`r`n" + $ReleaseNotes + "`r`n`r`n" + $ChangeHistory)
+              Copy-Item './CHANGELOG.md' './docs/Change Log.md' -Force
 
               Write-Output "Version=$($NewVersion.ToString())" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
               Write-Output "ReleaseNotes<<EOF" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
