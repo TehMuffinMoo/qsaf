@@ -29,6 +29,7 @@ Ensure you have checked the [list of pre-requisites](../Pre-Requisites).
     ```
 
     <b>Example Docker Compose File</b>
+
     There is an example configuration included below, which configures the necessary image location, exposed ports, folders & configuration file.
 
     You can customise this example to your needs.
@@ -55,6 +56,7 @@ Ensure you have checked the [list of pre-requisites](../Pre-Requisites).
     ```
 
     <b>Example QSAF Configuration File</b>
+    
     See the [Config File](#config-file) section for details on QSAF configuration.
 
 ### Config File
