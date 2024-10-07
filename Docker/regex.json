@@ -1,7 +1,7 @@
 {
     "Formats": [
         {
-            "Name": "NIOS-Query",
+            "Name": "BIND-Query",
             "Regexes": [
                 {
                     "Regex": ".*client @0x[0-9a-fA-F]+ ([^#]+)#\\d+ \\([^)]+\\): query: ([^ ]+) [A-Za-z]+ ([A-Za-z]+) [+-]+.*$",
@@ -20,7 +20,7 @@
             ]
         },
         {
-            "Name": "NIOS-Response",
+            "Name": "BIND-Response",
             "Regexes": [
                 {
                     "Regex": ".*client ([^#]+)#\\d+: (UDP|TCP): query: ([^ ]+) [A-Za-z]+ ([A-Za-z]+).*$",
@@ -43,9 +43,22 @@
             "Regexes": [
                 {
                     "Regex": "\\d+,\\d+,Query,,([^,]+),\\d+,,I,([^,]+),[^,]+,([^,]+)",
-                    "IP-Group": "0",
-                    "Query-Group": "1",
-                    "Type-Group": "2"
+                    "IP-Group": 0,
+                    "Query-Group": 1,
+                    "Type-Group": 2,
+                    "Capture-Groups": 3
+                }
+            ]
+        },
+        {
+            "Name": "Unbound-Query",
+            "Regexes": [
+                {
+                    "Regex": ".*info: ((\\d+\\.)+\\d+) ([^ ]+) ([A-Za-z]).*",
+                    "IP-Group": 0,
+                    "Query-Group": 2,
+                    "Type-Group": 3,
+                    "Capture-Groups": 4
                 }
             ]
         }
