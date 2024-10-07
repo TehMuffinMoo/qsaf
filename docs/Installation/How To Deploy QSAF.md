@@ -13,6 +13,9 @@ You can deploy QSAF in an Online (Internet Connected) Environment, or an Offline
 Ensure you have checked the [list of pre-requisites](../Pre-Requisites).
 
 ## Configuring Docker / Compose
+!!! warning "Important Note"
+
+    Creating a directory under root assumes root privileges, either directly or through the use of sudo.
 
 1. Create a new directory for the Docker files and change into that new directory.
     ```sh
@@ -21,11 +24,11 @@ Ensure you have checked the [list of pre-requisites](../Pre-Requisites).
     ```
 2. Create a new directory for the log files to be stored in
     ```sh
-    mkdir logs
+    mkdir /Docker/logs
     ```
 3. Create & edit the Docker Compose file
     ```sh
-    nano compose.yaml
+    nano /Docker/compose.yaml
     ```
 
     <b>Example Docker Compose File</b>
@@ -47,8 +50,8 @@ Ensure you have checked the [list of pre-requisites](../Pre-Requisites).
           LOGLEVEL: INFO
         restart: always
         volumes:
-          - ./config.ini:/home/qsaf/config.ini
-          - ./logs:/var/log/syslog-ng
+          - /Docker/config.ini:/home/qsaf/config.ini
+          - /Docker/logs:/var/log/syslog-ng
     ```
 4. Create & edit the QSAF Config file
     ```sh
@@ -60,7 +63,7 @@ Ensure you have checked the [list of pre-requisites](../Pre-Requisites).
     See the [Config File](#config-file) section for details on QSAF configuration.
 
 ### Config File
-Create the config file, ensuring it aligns with the one specified in [Configuring Docker Compose](#configuring-docker-compose).
+When creating the config file, ensure it aligns with the one specified in [Configuring Docker Compose](#:~:text=%2D%20./config.ini%3A/home/qsaf/config.ini).
 
 You can get the latest example config file from [Github](https://github.com/TehMuffinMoo/qsaf/blob/main/config.ini).
 
@@ -118,6 +121,14 @@ ghcr.io/tehmuffinmoo/qsaf            latest    0de3acf76154   About an hour ago 
 
 ### Start/Stop Docker Compose
 Once everything is configured, you can proceed to start the container using `docker compose up` or `docker compose up -d` to start it in daemon mode (in the background).
+
+!!! warning "Important Note"
+
+    The QSAF Docker Instance must have Read/Write access to the docker directory. If this was created/owned by root, you must also start the container using root/sudo.
+
+!!! info "Note"
+
+    When starting the container with Docker Compose, your current directory must be the docker directory where the `compose.yaml` file is located.
 
 If using daemon mode, you can check the logs as described [here](../../Usage/Log%20Output/).
 
