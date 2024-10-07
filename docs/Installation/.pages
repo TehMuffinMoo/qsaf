@@ -1,5 +1,3 @@
 nav:
-    - index.md
-    - Change Log.md
     - Pre-Requisites.md
     - How To Deploy QSAF.md
