@@ -13,6 +13,9 @@ You can deploy QSAF in an Online (Internet Connected) Environment, or an Offline
 Ensure you have checked the [list of pre-requisites](../Pre-Requisites).
 
 ## Configuring Docker / Compose
+!!! warning "Important Note"
+
+    Creating a directory under root assumes root privileges, either directly or through the use of sudo.
 
 1. Create a new directory for the Docker files and change into that new directory.
     ```sh
@@ -21,11 +24,11 @@ Ensure you have checked the [list of pre-requisites](../Pre-Requisites).
     ```
 2. Create a new directory for the log files to be stored in
     ```sh
-    mkdir logs
+    mkdir /Docker/logs
     ```
 3. Create & edit the Docker Compose file
     ```sh
-    nano compose.yaml
+    nano /Docker/compose.yaml
     ```
 
     <b>Example Docker Compose File</b>
@@ -47,8 +50,8 @@ Ensure you have checked the [list of pre-requisites](../Pre-Requisites).
           LOGLEVEL: INFO
         restart: always
         volumes:
-          - ./config.ini:/home/qsaf/config.ini
-          - ./logs:/var/log/syslog-ng
+          - /Docker/config.ini:/home/qsaf/config.ini
+          - /Docker/logs:/var/log/syslog-ng
     ```
 4. Create & edit the QSAF Config file
     ```sh
@@ -57,10 +60,45 @@ Ensure you have checked the [list of pre-requisites](../Pre-Requisites).
 
     <b>Example QSAF Configuration File</b>
 
+    ??? info "config.ini"
+
+        ```ini
+        [server]
+        ## The role of the qsaf container.
+        #### collector will simply collect syslog data via syslog-ng and keep it for future use
+        #### forwarder will take existing syslog-ng data and generate queries to the DNS forwarder
+        #### both will collect syslog data and generate queries in real time
+        role = both
+        ## The frequency in which updates are printed to the docker log. Setting to 0 will turn off updates.
+        print_frequency = 100
+
+        [dns]
+        ## The DNS Server Type to use when forwarding requests. (Plain/DoH/DoT)
+        type = Plain
+        ## The DNS Server to forward requests to
+        forwarder = 52.119.40.100
+        ## The DNS View name to apply to forwarded requests
+        view = mcox-sa
+        ## A comma-separated list of domains to ignore when replaying queries. This is useful for excluding internal domains. Leave blank to send all queries.
+        ignored_domains = mydomain.corp,intranet.acme.lab
+
+        [syslog]
+        ## The type of syslog to use for regex matching.
+        ## BIND-Query    # The Query log format for BIND / Infoblox NIOS
+        ## BIND-Response # The Response log format for BIND / Infoblox NIOS
+        ## NIOS-Capture  # The Infoblox NIOS Capture log format
+        ## Unbound-Query # The Unbound DNS Query log format
+        type = BIND-Query
+
+        [debug]
+        ## Debug logging (True/False)
+        enabled = False
+        ```
+    
     See the [Config File](#config-file) section for details on QSAF configuration.
 
 ### Config File
-Create the config file, ensuring it aligns with the one specified in [Configuring Docker Compose](#configuring-docker-compose).
+When creating the config file, ensure it aligns with the one specified in [Configuring Docker Compose](#:~:text=%2D%20/Docker/config.ini%3A/home/qsaf/config.ini).
 
 You can get the latest example config file from [Github](https://github.com/TehMuffinMoo/qsaf/blob/main/config.ini).
 
@@ -68,7 +106,7 @@ Each of the options within the Config File are detailed below.
 
 | Section | Option | Value(s) | Description |
 |---------|--------|----------|-------------|
-| server  | role | `collector`, `forwarder`, `both` | Specify the mode to run QSAF in. The Modes are described in more detail here: [Collector](../../Usage/Collector%20Mode/)  [Forwarder](../../Usage/Forwarder%20Mode/)  [Both](../../Usage/Collector%20%26%20Forwarding%20Mode/). |
+| server  | role | `collector`, `forwarder`, `both` | Specify the mode to run QSAF in. The Modes are described in more detail here: [Collector](../../Usage/Collector%20Mode/)  [Forwarder](../../Usage/Forwarding%20Mode/)  [Both](../../Usage/Collector%20%26%20Forwarding%20Mode/). |
 | server  | print_frequency | int | The frequency in which updates are printed to the docker log. Setting to 0 will turn off updates. |
 | dns     | type | `Plain`, `DoH`, `DoT` | The type of DNS Query to use when replaying data. Plain is via UDP. DNS over HTTPS & DNS over TLS will have considerable performance impact. |
 | dns     | forwarder | ip | The IP Address of the Recursive DNS Server to use when replaying data. |
@@ -118,6 +156,14 @@ ghcr.io/tehmuffinmoo/qsaf            latest    0de3acf76154   About an hour ago 
 
 ### Start/Stop Docker Compose
 Once everything is configured, you can proceed to start the container using `docker compose up` or `docker compose up -d` to start it in daemon mode (in the background).
+
+!!! warning "Important Note"
+
+    The QSAF Docker Instance must have Read/Write access to the docker directory. If this was created/owned by root, you must also start the container using root/sudo.
+
+!!! info "Note"
+
+    When starting the container with Docker Compose, your current directory must be the docker directory where the `compose.yaml` file is located.
 
 If using daemon mode, you can check the logs as described [here](../../Usage/Log%20Output/).
 
