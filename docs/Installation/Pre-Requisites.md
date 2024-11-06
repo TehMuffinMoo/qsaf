@@ -9,6 +9,7 @@
 ## Pre-Requisites
 The list of pre-requisites to use QSAF is included below;
 
+* You must have a minimum of 2 CPUs and 4GB RAM for the machine running Docker, which has been tested for 3,000 Queries Per Second (note that this is a rough guide)
 * You must have Docker & Docker Compose installed (Any supported OS is fine). See installation instructions [here](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository).
 * You must have access to download the Docker Container from `ghcr.io`. This could be direct from the machine with Docker installed, or via manually downloading and transferring the tarball.
 * If using QSAF in `Collector` or `Both` mode, the DNS Server(s) must have access to send syslog (default is UDP/514) to the QSAF instance
