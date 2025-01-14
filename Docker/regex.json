@@ -3,12 +3,11 @@
         {
             "Name": "BIND-Query",
             "Regexes": [
-                {
-                    "Regex": ".*client @0x[0-9a-fA-F]+ ([^#]+)#\\d+ \\([^)]+\\): query: ([^ ]+) [A-Za-z]+ ([A-Za-z]+) [+-]+.*$",
+                    "Regex": ".*client @0x[0-9a-fA-F]+ ([^#]+)#\\d+ \\([^)]+\\): query: ([^ ]+) [A-Za-z]+ ([A-Za-z]+(\\d+)?) [+-]+.*$",
                     "IP-Group": 0,
                     "Query-Group": 1,
                     "Type-Group": 2,
-                    "Capture-Groups": 3
+                    "Capture-Groups": 4
                 },
                 {
                     "Regex": ".*client (@0x[0-9a-fA-F]+ )?([^#]+)#\\d+ \\([^)]+\\): view [^:]+: query: ([^ ]+) [A-Za-z]+ ([^ ]+)",
