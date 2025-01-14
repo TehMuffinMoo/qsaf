@@ -3,6 +3,7 @@
         {
             "Name": "BIND-Query",
             "Regexes": [
+                {
                     "Regex": ".*client @0x[0-9a-fA-F]+ ([^#]+)#\\d+ \\([^)]+\\): query: ([^ ]+) [A-Za-z]+ ([A-Za-z]+(\\d+)?) [+-]+.*$",
                     "IP-Group": 0,
                     "Query-Group": 1,
