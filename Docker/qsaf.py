@@ -193,8 +193,8 @@ if role == 'forwarder':
                     threads += 1
                     line_number += 1
                     while threads > 1_000_000:
-                        logging.warning(f"Queue limit reached: {threads} tasks queued. Waiting 30s for backlog to clear...")
-                        time.sleep(30)  # Sleep for 30 second before checking again
+                        logging.warning(f"Queue limit reached: {threads} tasks queued. Waiting 60s for backlog to clear...")
+                        time.sleep(60)  # Sleep for 60 second before checking again
                     executor.submit(start_job_direct, row.qip, row.qname, row.qtype)
 
 elif role == 'both':
