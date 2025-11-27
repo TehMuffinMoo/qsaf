@@ -191,7 +191,7 @@ if role =='forwarder':
                         executor.submit(send_dns_query, row['qip'], row['qname'], row['qtype'], dns_server, dns_server_type)
             else:
                 print(f"Error: Missing columns in {filename}")
-		    print('\nLog forwarding complete.')
+            print('\nLog forwarding complete.')
 elif (role =='both'):
     print('Both Collector & Forwarder Mode enabled.\r')
     content = tailer.follow(open(log_file))
