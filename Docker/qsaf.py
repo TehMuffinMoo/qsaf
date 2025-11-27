@@ -132,6 +132,26 @@ def start_job(line):
         threads -= 1
         skipped += 1
 
+
+def start_job_direct(qip, qname, qtype):
+    global threads, queries, ignored, skipped
+    ignore = False
+    if ignored_domains:
+        for igdom in ignored_domains:
+            if igdom in qname:
+                ignore = True
+                break
+    if not ignore:
+        queries += 1
+        send_dns_query(qip, qname, qtype, dns_server, dns_server_type)
+    else:
+        ignored += 1
+        threads -= 1
+    if print_frequency and queries % print_frequency == 0:
+        logging.info(f"Queries: {queries} / QPS: {int(queries/(timeit.default_timer() - starttime))} "
+                     f"(Processed: {line_number} Active Threads: {threads} Errors: {errors} Ignored: {ignored} Skipped: {skipped})")
+
+
 def start_threadpool(content, executor):
     global threads, line_number
     if content:
@@ -171,7 +191,7 @@ if role == 'forwarder':
                 for row in df.itertuples(index=False):
                     threads += 1
                     line_number += 1
-                    executor.submit(send_dns_query, row.qip, row.qname, row.qtype, dns_server, dns_server_type)
+                    executor.submit(start_job_direct, row.qip, row.qname, row.qtype)
 
 elif role == 'both':
     logging.info('Both Collector & Forwarder Mode enabled.')
