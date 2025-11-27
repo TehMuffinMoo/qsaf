@@ -18,6 +18,7 @@ import configparser
 import gzip
 import httpx
 import json
+import pandas as pd
 
 #########################################################	
 
@@ -176,7 +177,21 @@ if role =='forwarder':
             print("\n")
             content=open(filepath, 'r')
             start_threadpool(content)
-    print('\nLog forwarding complete.')
+        elif filename.endswith('.parquet'):
+            print("\n")
+            print('Processing Parquet file:', filepath)
+            print("\n")
+            df = pd.read_parquet(filepath)
+
+            if {'qip', 'qname', 'qtype'}.issubset(df.columns):
+                with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+                    for _, row in df.iterrows():
+                        threads += 1
+                        line_number += 1
+                        executor.submit(send_dns_query, row['qip'], row['qname'], row['qtype'], dns_server, dns_server_type)
+            else:
+                print(f"Error: Missing columns in {filename}")
+		    print('\nLog forwarding complete.')
 elif (role =='both'):
     print('Both Collector & Forwarder Mode enabled.\r')
     content = tailer.follow(open(log_file))
