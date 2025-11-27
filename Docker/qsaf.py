@@ -21,6 +21,7 @@ import json
 import pandas as pd
 import pyarrow.parquet as pq
 import sys
+import time
 
 #########################################################
 # Setup logging
