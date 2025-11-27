@@ -20,10 +20,15 @@ import httpx
 import json
 import pandas as pd
 import pyarrow.parquet as pq
+import sys
 
 #########################################################
 # Setup logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s')
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s [%(levelname)s] %(message)s',
+    handlers=[logging.StreamHandler(sys.stdout)]
+)
 
 with open('/var/run/qsaf.pid', 'w', encoding='utf-8') as f:
     f.write(str(os.getpid()))
@@ -167,7 +172,6 @@ if role == 'forwarder':
                     threads += 1
                     line_number += 1
                     executor.submit(send_dns_query, row.qip, row.qname, row.qtype, dns_server, dns_server_type)
-    logging.info('Log forwarding complete.')
 
 elif role == 'both':
     logging.info('Both Collector & Forwarder Mode enabled.')
